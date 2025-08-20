@@ -63,10 +63,7 @@ const generatedYearData = [
   },
 ];
 
-export default function UserStatisticsBarChart({
-  selectedYear,
-  selectedMonth,
-}) {
+export default function UserStatisticsBarChart({ selectedYear }) {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
@@ -74,16 +71,9 @@ export default function UserStatisticsBarChart({
       (data) => data.year === selectedYear
     );
     if (yearData) {
-      if (selectedMonth === "All") {
-        setChartData(yearData.data);
-      } else {
-        const filteredData = yearData.data.filter(
-          (entry) => entry.month === selectedMonth
-        );
-        setChartData(filteredData);
-      }
+      setChartData(yearData.data);
     }
-  }, [selectedMonth, selectedYear]);
+  }, [selectedYear]);
 
   return (
     <div className="w-full">
@@ -96,7 +86,7 @@ export default function UserStatisticsBarChart({
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="users" fill="#CD8085" barSize={20} />
+          <Bar dataKey="users" fill="#131927" barSize={20} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -9,65 +9,61 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Provided data structure with plain growth values
 const generatedYearData = [
   {
     year: 2023,
     data: [
-      { month: "January", growth: 70 },
-      { month: "February", growth: 35 },
-      { month: "March", growth: 102 },
-      { month: "April", growth: 87 },
+      { month: "Jan", growth: 70 },
+      { month: "Feb", growth: 35 },
+      { month: "Mar", growth: 102 },
+      { month: "Apr", growth: 87 },
       { month: "May", growth: 90 },
-      { month: "June", growth: 100 },
-      { month: "July", growth: 75 },
-      { month: "August", growth: 110 },
-      { month: "September", growth: 65 },
-      { month: "October", growth: 85 },
-      { month: "November", growth: 95 },
-      { month: "December", growth: 105 },
+      { month: "Jun", growth: 100 },
+      { month: "Jul", growth: 75 },
+      { month: "Aug", growth: 110 },
+      { month: "Sep", growth: 65 },
+      { month: "Oct", growth: 85 },
+      { month: "Nov", growth: 95 },
+      { month: "Dec", growth: 105 },
     ],
   },
   {
     year: 2024,
     data: [
-      { month: "January", growth: 32 },
-      { month: "February", growth: 28 },
-      { month: "March", growth: 35 },
-      { month: "April", growth: 30 },
+      { month: "Jan", growth: 32 },
+      { month: "Feb", growth: 28 },
+      { month: "Mar", growth: 35 },
+      { month: "Apr", growth: 30 },
       { month: "May", growth: 45 },
-      { month: "June", growth: 60 },
-      { month: "July", growth: 40 },
-      { month: "August", growth: 50 },
-      { month: "September", growth: 55 },
-      { month: "October", growth: 65 },
-      { month: "November", growth: 70 },
-      { month: "December", growth: 75 },
+      { month: "Jun", growth: 60 },
+      { month: "Jul", growth: 40 },
+      { month: "Aug", growth: 50 },
+      { month: "Sep", growth: 55 },
+      { month: "Oct", growth: 65 },
+      { month: "Nov", growth: 70 },
+      { month: "Dec", growth: 75 },
     ],
   },
   {
     year: 2025,
     data: [
-      { month: "January", growth: 110 },
-      { month: "February", growth: 120 },
-      { month: "March", growth: 140 },
-      { month: "April", growth: 130 },
+      { month: "Jan", growth: 110 },
+      { month: "Feb", growth: 120 },
+      { month: "Mar", growth: 140 },
+      { month: "Apr", growth: 130 },
       { month: "May", growth: 150 },
-      { month: "June", growth: 160 },
-      { month: "July", growth: 170 },
-      { month: "August", growth: 180 },
-      { month: "September", growth: 190 },
-      { month: "October", growth: 200 },
-      { month: "November", growth: 210 },
-      { month: "December", growth: 220 },
+      { month: "Jun", growth: 160 },
+      { month: "Jul", growth: 170 },
+      { month: "Aug", growth: 180 },
+      { month: "Sep", growth: 190 },
+      { month: "Oct", growth: 200 },
+      { month: "Nov", growth: 210 },
+      { month: "Dec", growth: 220 },
     ],
   },
 ];
 
-export default function MatchedGrowthAreaChart({
-  selectedYear,
-  selectedMonth,
-}) {
+export default function MatchedGrowthAreaChart({ selectedYear }) {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
@@ -75,16 +71,9 @@ export default function MatchedGrowthAreaChart({
       (data) => data.year === selectedYear
     );
     if (yearData) {
-      if (selectedMonth === "All") {
-        setChartData(yearData.data);
-      } else {
-        const filteredData = yearData.data.filter(
-          (entry) => entry.month === selectedMonth
-        );
-        setChartData(filteredData);
-      }
+      setChartData(yearData.data);
     }
-  }, [selectedMonth, selectedYear]);
+  }, [selectedYear]);
 
   if (!chartData.length) {
     return (
@@ -118,8 +107,8 @@ export default function MatchedGrowthAreaChart({
               x2="120%"
               y2="150%"
             >
-              <stop offset="5%" stopColor="#CD8085" stopOpacity={1} />
-              <stop offset="95%" stopColor="#E8F2FF1A" stopOpacity={1} />
+              <stop offset="10%" stopColor="#0095FF" stopOpacity={1} />
+              <stop offset="90%" stopColor="#131927" stopOpacity={1} />
             </linearGradient>
           </defs>
 
@@ -144,7 +133,7 @@ export default function MatchedGrowthAreaChart({
           <Area
             type="monotone"
             dataKey="growth"
-            stroke="#CD8085"
+            stroke="#131927"
             fill="url(#growthGradient)" // Apply the gradient fill
             strokeWidth={2}
             activeDot={{ r: 5 }}
