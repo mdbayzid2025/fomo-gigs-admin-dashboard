@@ -7,11 +7,9 @@ import Dashboard from "../Dashboard/Dashboard";
 import Notifications from "../Dashboard/Notifications";
 import VerifyOtp from "../../pages/VeryfiOTP";
 import UpdatePassword from "../../pages/UpdatePassword";
-import UserDetails from "../Dashboard/UserDetails";
 import Settings from "../Dashboard/Settings";
 import Profile from "../Dashboard/Settings/Profile";
 import ChangePassword from "../Dashboard/Settings/ChangePassword";
-import Diagnosis from "../Dashboard/Diagnosis";
 import Therapy from "../Dashboard/Therapy";
 import ParentingJourney from "../Dashboard/ParentingJourney";
 import InterestsAndValues from "../Dashboard/InterestsAndValues";
@@ -19,6 +17,8 @@ import Faq from "../Dashboard/Settings/Faq";
 import TermsAndConditions from "../Dashboard/Settings/TermsAndConditions";
 import AboutUs from "../Dashboard/Settings/AboutUs";
 import PrivacyPolicy from "../Dashboard/Settings/PrivacyPolicy";
+import ProviderManagement from "../Dashboard/ProviderManagement";
+import ClientManagement from "../Dashboard/ClientManagement";
 
 const router = createBrowserRouter([
   {
@@ -55,15 +55,15 @@ const router = createBrowserRouter([
           },
           {
             path: "provider-management",
-            element: <UserDetails />,
+            element: <ProviderManagement />,
           },
           {
             path: "client-management",
-            element: <Diagnosis />,
+            element: <ClientManagement />,
           },
           {
             path: "order-management",
-            element: <Diagnosis />,
+            element: <ClientManagement />,
           },
           {
             path: "event-management",
