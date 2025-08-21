@@ -20,6 +20,7 @@ import PrivacyPolicy from "../Dashboard/Settings/PrivacyPolicy";
 import ProviderManagement from "../Dashboard/ProviderManagement";
 import ClientManagement from "../Dashboard/ClientManagement";
 import OrderManagement from "../Dashboard/OrderManagement";
+import EventManagement from "../Dashboard/EventManagement";
 
 const router = createBrowserRouter([
   {
@@ -68,7 +69,7 @@ const router = createBrowserRouter([
           },
           {
             path: "event-management",
-            element: <Therapy />,
+            element: <EventManagement />,
           },
           {
             path: "social-management",
