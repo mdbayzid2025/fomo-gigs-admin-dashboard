@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { FiDelete, FiEdit, FiPlus } from "react-icons/fi";
 import { FaCheck } from "react-icons/fa";
 import momentum from "../../../public/Images/subscriptionImages/momentum.png";
 import acceleration from "../../../public/Images/subscriptionImages/acceleration.png";
@@ -7,7 +5,7 @@ import elevate from "../../../public/Images/subscriptionImages/elevate.png";
 import ignite from "../../../public/Images/subscriptionImages/ignite.png";
 
 // Initial mock data for subscriptions
-const initialSubscriptions = [
+const subscriptionsData = [
   {
     subscriptionId: "SUB123456",
     subscriberName: "John Doe",
@@ -104,68 +102,68 @@ const initialSubscriptions = [
 ];
 
 export default function SubscriptionPage() {
-  const [subscriptions, setSubscriptions] = useState(initialSubscriptions);
-//   const [openModal, setOpenModal] = useState(false);
-//   const [selectedSubscription, setSelectedSubscription] = useState(null);
-//   const [newSubscription, setNewSubscription] = useState({
-//     subscriptionId: "",
-//     subscriberName: "",
-//     plan: "",
-//     status: "Active",
-//     startDate: "",
-//     endDate: "",
-//     price: "",
-//     description: "",
-//     bgColor: "bg-blue-50",
-//     textColor: "bg-blue-500 hover:bg-blue-600",
-//     features: [],
-//   });
+  //   const [subscriptions, setSubscriptions] = useState(initialSubscriptions);
+  //   const [openModal, setOpenModal] = useState(false);
+  //   const [selectedSubscription, setSelectedSubscription] = useState(null);
+  //   const [newSubscription, setNewSubscription] = useState({
+  //     subscriptionId: "",
+  //     subscriberName: "",
+  //     plan: "",
+  //     status: "Active",
+  //     startDate: "",
+  //     endDate: "",
+  //     price: "",
+  //     description: "",
+  //     bgColor: "bg-blue-50",
+  //     textColor: "bg-blue-500 hover:bg-blue-600",
+  //     features: [],
+  //   });
 
-//   const handleOpenModal = (subscription = null) => {
-//     if (subscription) {
-//       setSelectedSubscription(subscription);
-//       setNewSubscription(subscription);
-//     } else {
-//       setNewSubscription({
-//         subscriptionId: "",
-//         subscriberName: "",
-//         plan: "",
-//         status: "Active",
-//         startDate: "",
-//         endDate: "",
-//         price: "",
-//         description: "",
-//         bgColor: "bg-blue-50",
-//         textColor: "bg-blue-500 hover:bg-blue-600",
-//         features: [],
-//       });
-//     }
-//     setOpenModal(true);
-//   };
+  //   const handleOpenModal = (subscription = null) => {
+  //     if (subscription) {
+  //       setSelectedSubscription(subscription);
+  //       setNewSubscription(subscription);
+  //     } else {
+  //       setNewSubscription({
+  //         subscriptionId: "",
+  //         subscriberName: "",
+  //         plan: "",
+  //         status: "Active",
+  //         startDate: "",
+  //         endDate: "",
+  //         price: "",
+  //         description: "",
+  //         bgColor: "bg-blue-50",
+  //         textColor: "bg-blue-500 hover:bg-blue-600",
+  //         features: [],
+  //       });
+  //     }
+  //     setOpenModal(true);
+  //   };
 
-//   const handleCloseModal = () => {
-//     setOpenModal(false);
-//     setSelectedSubscription(null);
-//   };
+  //   const handleCloseModal = () => {
+  //     setOpenModal(false);
+  //     setSelectedSubscription(null);
+  //   };
 
-//   const handleAddOrEditSubscription = () => {
-//     if (selectedSubscription) {
-//       setSubscriptions((prev) =>
-//         prev.map((sub) =>
-//           sub.subscriptionId === selectedSubscription.subscriptionId
-//             ? { ...newSubscription }
-//             : sub
-//         )
-//       );
-//     } else {
-//       const newSub = {
-//         ...newSubscription,
-//         subscriptionId: `SUB${Date.now()}`,
-//       };
-//       setSubscriptions((prev) => [...prev, newSub]);
-//     }
-//     handleCloseModal();
-//   };
+  //   const handleAddOrEditSubscription = () => {
+  //     if (selectedSubscription) {
+  //       setSubscriptions((prev) =>
+  //         prev.map((sub) =>
+  //           sub.subscriptionId === selectedSubscription.subscriptionId
+  //             ? { ...newSubscription }
+  //             : sub
+  //         )
+  //       );
+  //     } else {
+  //       const newSub = {
+  //         ...newSubscription,
+  //         subscriptionId: `SUB${Date.now()}`,
+  //       };
+  //       setSubscriptions((prev) => [...prev, newSub]);
+  //     }
+  //     handleCloseModal();
+  //   };
 
   //   const handleDeleteSubscription = (subscriptionId) => {
   //     setSubscriptions((prev) =>
@@ -173,31 +171,31 @@ export default function SubscriptionPage() {
   //     );
   //   };
 
-//   const handleFeatureChange = (index, value) => {
-//     const updatedFeatures = [...newSubscription.features];
-//     updatedFeatures[index] = value;
-//     setNewSubscription({
-//       ...newSubscription,
-//       features: updatedFeatures,
-//     });
-//   };
+  //   const handleFeatureChange = (index, value) => {
+  //     const updatedFeatures = [...newSubscription.features];
+  //     updatedFeatures[index] = value;
+  //     setNewSubscription({
+  //       ...newSubscription,
+  //       features: updatedFeatures,
+  //     });
+  //   };
 
-//   const addFeature = () => {
-//     setNewSubscription({
-//       ...newSubscription,
-//       features: [...newSubscription.features, ""],
-//     });
-//   };
+  //   const addFeature = () => {
+  //     setNewSubscription({
+  //       ...newSubscription,
+  //       features: [...newSubscription.features, ""],
+  //     });
+  //   };
 
-//   const removeFeature = (index) => {
-//     const updatedFeatures = newSubscription.features.filter(
-//       (_, i) => i !== index
-//     );
-//     setNewSubscription({
-//       ...newSubscription,
-//       features: updatedFeatures,
-//     });
-//   };
+  //   const removeFeature = (index) => {
+  //     const updatedFeatures = newSubscription.features.filter(
+  //       (_, i) => i !== index
+  //     );
+  //     setNewSubscription({
+  //       ...newSubscription,
+  //       features: updatedFeatures,
+  //     });
+  //   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -223,7 +221,7 @@ export default function SubscriptionPage() {
 
         {/* Subscription Cards Flex Layout */}
         <div className="flex flex-wrap gap-6">
-          {subscriptions.map((subscription) => (
+          {subscriptionsData.map((subscription) => (
             <div
               key={subscription.subscriptionId}
               style={{ backgroundColor: subscription.bgColor }}
