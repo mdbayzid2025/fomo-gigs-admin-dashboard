@@ -10,15 +10,17 @@ import UpdatePassword from "../../pages/UpdatePassword";
 import Settings from "../Dashboard/Settings";
 import Profile from "../Dashboard/Settings/Profile";
 import ChangePassword from "../Dashboard/Settings/ChangePassword";
-import Therapy from "../Dashboard/Therapy";
-import ParentingJourney from "../Dashboard/ParentingJourney";
-import InterestsAndValues from "../Dashboard/InterestsAndValues";
 import Faq from "../Dashboard/Settings/Faq";
 import TermsAndConditions from "../Dashboard/Settings/TermsAndConditions";
 import AboutUs from "../Dashboard/Settings/AboutUs";
 import PrivacyPolicy from "../Dashboard/Settings/PrivacyPolicy";
 import ProviderManagement from "../Dashboard/ProviderManagement";
 import ClientManagement from "../Dashboard/ClientManagement";
+import OrderManagement from "../Dashboard/OrderManagement";
+import EventManagement from "../Dashboard/EventManagement";
+import SocialManagement from "../Dashboard/SocialManagement";
+import Subscription from "../Dashboard/Subscription";
+import Reports from "../Dashboard/Reports";
 
 const router = createBrowserRouter([
   {
@@ -63,28 +65,23 @@ const router = createBrowserRouter([
           },
           {
             path: "order-management",
-            element: <ClientManagement />,
+            element: <OrderManagement />,
           },
           {
             path: "event-management",
-            element: <Therapy />,
+            element: <EventManagement />,
           },
           {
             path: "social-management",
-            element: <ParentingJourney />,
-          },
-
-          {
-            path: "interests-and-values",
-            element: <InterestsAndValues />,
+            element: <SocialManagement />,
           },
           {
             path: "subscription",
-            element: <InterestsAndValues />,
+            element: <Subscription />,
           },
           {
             path: "reports",
-            element: <InterestsAndValues />,
+            element: <Reports />,
           },
           {
             path: "settings",
