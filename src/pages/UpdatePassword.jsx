@@ -44,7 +44,7 @@ const UpdatePassword = () => {
   };
 
   return (
-    <div className="bg-[#f5e5e4] min-h-[100vh]">
+    <div className="bg-[#fbfbfb] min-h-[100vh]">
       <Container maxWidth="lg">
         <Grid
           container
@@ -53,7 +53,7 @@ const UpdatePassword = () => {
           alignItems="center"
           style={{ minHeight: "80vh" }}
         >
-          <div className="bg-[#fff] rounded-lg p-5 border border-[#875473] w-1/2">
+          <div className="bg-[#fff] rounded-lg p-5 border border-[#131927] w-1/2">
             <div className="mb-8">
               <div className="flex items-center gap-1 mb-4">
                 <Link to="/verify-otp" style={{ textDecoration: "none" }}>
@@ -84,11 +84,11 @@ const UpdatePassword = () => {
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "&.Mui-focused fieldset": {
-                        borderColor: "#CD8085", // Change border color on focus
+                        borderColor: "#0095FF", // Change border color on focus
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: "#CD8085", // Change label color on focus
+                      color: "#0095FF", // Change label color on focus
                     },
                     height: "50px", // Set the height of the TextField
                     "& .MuiInputBase-root": {
@@ -105,9 +105,9 @@ const UpdatePassword = () => {
                         edge="end"
                       >
                         {showNewPassword ? (
-                          <IoIosEyeOff className="text-[#CD8085]" />
+                          <IoIosEyeOff className="text-[#131927]" />
                         ) : (
-                          <IoMdEye className="text-[#CD8085]" />
+                          <IoMdEye className="text-[#131927]" />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -154,9 +154,9 @@ const UpdatePassword = () => {
                         edge="end"
                       >
                         {showConfirmPassword ? (
-                          <IoIosEyeOff className="text-[#CD8085]" />
+                          <IoIosEyeOff className="text-[#131927]" />
                         ) : (
-                          <IoMdEye className="text-[#CD8085]" />
+                          <IoMdEye className="text-[#131927]" />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -176,13 +176,13 @@ const UpdatePassword = () => {
                 <Button
                   variant="contained"
                   sx={{
-                    backgroundColor: "#CD8085",
+                    backgroundColor: "#131927",
                     color: "white",
                     fontSize: "16px",
                     textTransform: "none",
                     padding: "10px",
                     width: "100%",
-                    borderRadius: "30px",
+                    borderRadius: "20px",
                     fontWeight: "bold",
                   }}
                   type="submit"

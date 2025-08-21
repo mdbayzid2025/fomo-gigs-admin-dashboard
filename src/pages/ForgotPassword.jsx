@@ -38,7 +38,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="bg-[#f5e5e4] min-h-[100vh]">
+    <div className="bg-[#fbfbfb] min-h-[100vh]">
       <Container maxWidth="lg">
         <Grid
           container
@@ -47,7 +47,7 @@ const ForgotPassword = () => {
           alignItems="center"
           style={{ minHeight: "80vh" }}
         >
-          <div className="bg-[#fff] rounded-lg p-5 border border-[#875473]">
+          <div className="bg-[#fff] rounded-lg p-5 border border-[#131927]">
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-4">
                 <Link to="/sign-in" className="cursor-pointer">
@@ -85,11 +85,11 @@ const ForgotPassword = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "&.Mui-focused fieldset": {
-                      borderColor: "#CD8085", // Change border color on focus
+                      borderColor: "#0095FF", // Change border color on focus
                     },
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#CD8085", // Change label color on focus (optional)
+                    color: "#0095FF", // Change label color on focus (optional)
                   },
                   height: "50px", // Set the height of the TextField
                   "& .MuiInputBase-root": {
@@ -105,10 +105,10 @@ const ForgotPassword = () => {
                 color="primary"
                 style={{
                   marginTop: "20px",
-                  backgroundColor: "#CD8085",
+                  backgroundColor: "#131927",
                   padding: "8px",
                   fontWeight: "bold",
-                  borderRadius: "30px",
+                  borderRadius: "20px",
                   fontSize: "16px",
                   textTransform: "none",
                 }}
