@@ -47,7 +47,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-[#f5e5e4] min-h-[100vh]">
+    <div className="bg-[#fbfbfb] min-h-[100vh]">
       <Container maxWidth="lg">
         <Grid
           container
@@ -56,7 +56,7 @@ const SignIn = () => {
           alignItems="center"
           style={{ minHeight: "80vh" }}
         >
-          <div className="bg-[#fff] rounded-lg p-5 border border-[#875473]">
+          <div className="bg-[#fff] rounded-lg p-5 border border-[#131927]">
             <p className="text-3xl text-center font-semibold mb-7">
               Sign in to continue!
             </p>
@@ -77,11 +77,11 @@ const SignIn = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "&.Mui-focused fieldset": {
-                      borderColor: "#CD8085", // Change border color on focus
+                      borderColor: "#0095FF", // Change border color on focus
                     },
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#CD8085", // Change label color on focus (optional)
+                    color: "#0095FF", // Change label color on focus (optional)
                   },
                   height: "50px", // Set the height of the TextField
                   "& .MuiInputBase-root": {
@@ -105,11 +105,11 @@ const SignIn = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "&.Mui-focused fieldset": {
-                      borderColor: "#CD8085", // Change border color on focus
+                      borderColor: "#0095FF", // Change border color on focus
                     },
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#CD8085", // Change label color on focus (optional)
+                    color: "#0095FF", // Change label color on focus (optional)
                   },
                   height: "50px", // Set the height of the TextField
                   "& .MuiInputBase-root": {
@@ -119,7 +119,7 @@ const SignIn = () => {
               />
 
               <div className="flex items-center justify-between mt-2">
-                <div className="text-[#875473] font-semibold">
+                <div className="text-[#131927] font-semibold">
                   <FormControlLabel
                     control={<Checkbox name="rememberMe" color="primary" />}
                     label="Remember Me"
@@ -129,9 +129,9 @@ const SignIn = () => {
                   <Link
                     to="/forgot-password"
                     style={{
-                      fontWeight: "bold",
+                      fontWeight: "semibold",
                       textDecoration: "underline",
-                      color: "#875473",
+                      color: "#131927",
                     }}
                   >
                     Forgot Password?
@@ -145,10 +145,10 @@ const SignIn = () => {
                 variant="contained"
                 style={{
                   marginTop: "20px",
-                  backgroundColor: "#CD8085",
+                  backgroundColor: "#131927",
                   padding: "8px",
                   fontWeight: "semibold",
-                  borderRadius: "30px",
+                  borderRadius: "20px",
                   fontSize: "16px",
                   textTransform: "none",
                 }}

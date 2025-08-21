@@ -46,7 +46,7 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="bg-[#f5e5e4] min-h-[100vh]">
+    <div className="bg-[#fbfbfb] min-h-[100vh]">
       <Container maxWidth="lg">
         <Grid
           container
@@ -55,7 +55,7 @@ const VerifyOtp = () => {
           alignItems="center"
           style={{ minHeight: "80vh" }}
         >
-          <div className="bg-[#fff] rounded-lg p-5 border border-[#875473]">
+          <div className="bg-[#fff] rounded-lg p-5 border border-[#131927]">
             <div className="mb-8">
               <div className="flex items-center gap-1 mb-4">
                 <Link to="/forgot-password" className="cursor-pointer">
@@ -81,7 +81,7 @@ const VerifyOtp = () => {
                   height: "45px",
                   fontSize: "20px",
                   backgroundColor: "transparent",
-                  border: "1px solid #CD8085",
+                  border: "1px solid #0095FF",
                   borderRadius: "8px",
                   margin: "5px",
                   textAlign: "center",
@@ -98,10 +98,10 @@ const VerifyOtp = () => {
               variant="contained"
               style={{
                 marginTop: "20px",
-                backgroundColor: "#CD8085",
+                backgroundColor: "#131927",
                 padding: "8px",
                 fontWeight: "bold",
-                borderRadius: "30px",
+                borderRadius: "20px",
                 fontSize: "16px",
                 textTransform: "none",
               }}
