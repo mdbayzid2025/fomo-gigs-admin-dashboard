@@ -20,6 +20,7 @@ import OrderManagement from "../Dashboard/OrderManagement";
 import EventManagement from "../Dashboard/EventManagement";
 import SocialManagement from "../Dashboard/SocialManagement";
 import Subscription from "../Dashboard/Subscription";
+import Reports from "../Dashboard/Reports";
 
 const router = createBrowserRouter([
   {
@@ -80,7 +81,7 @@ const router = createBrowserRouter([
           },
           {
             path: "reports",
-            element: <SocialManagement />,
+            element: <Reports />,
           },
           {
             path: "settings",
