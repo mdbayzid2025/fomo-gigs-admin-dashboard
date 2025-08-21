@@ -19,6 +19,7 @@ import AboutUs from "../Dashboard/Settings/AboutUs";
 import PrivacyPolicy from "../Dashboard/Settings/PrivacyPolicy";
 import ProviderManagement from "../Dashboard/ProviderManagement";
 import ClientManagement from "../Dashboard/ClientManagement";
+import OrderManagement from "../Dashboard/OrderManagement";
 
 const router = createBrowserRouter([
   {
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
           },
           {
             path: "order-management",
-            element: <ClientManagement />,
+            element: <OrderManagement />,
           },
           {
             path: "event-management",
