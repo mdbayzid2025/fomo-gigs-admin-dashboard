@@ -10,9 +10,6 @@ import UpdatePassword from "../../pages/UpdatePassword";
 import Settings from "../Dashboard/Settings";
 import Profile from "../Dashboard/Settings/Profile";
 import ChangePassword from "../Dashboard/Settings/ChangePassword";
-import Therapy from "../Dashboard/Therapy";
-import ParentingJourney from "../Dashboard/ParentingJourney";
-import InterestsAndValues from "../Dashboard/InterestsAndValues";
 import Faq from "../Dashboard/Settings/Faq";
 import TermsAndConditions from "../Dashboard/Settings/TermsAndConditions";
 import AboutUs from "../Dashboard/Settings/AboutUs";
@@ -21,6 +18,7 @@ import ProviderManagement from "../Dashboard/ProviderManagement";
 import ClientManagement from "../Dashboard/ClientManagement";
 import OrderManagement from "../Dashboard/OrderManagement";
 import EventManagement from "../Dashboard/EventManagement";
+import SocialManagement from "../Dashboard/SocialManagement";
 
 const router = createBrowserRouter([
   {
@@ -73,20 +71,15 @@ const router = createBrowserRouter([
           },
           {
             path: "social-management",
-            element: <ParentingJourney />,
-          },
-
-          {
-            path: "interests-and-values",
-            element: <InterestsAndValues />,
+            element: <SocialManagement />,
           },
           {
             path: "subscription",
-            element: <InterestsAndValues />,
+            element: <SocialManagement />,
           },
           {
             path: "reports",
-            element: <InterestsAndValues />,
+            element: <SocialManagement />,
           },
           {
             path: "settings",
