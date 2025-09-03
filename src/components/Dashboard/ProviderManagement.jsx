@@ -1,226 +1,195 @@
 import { useState } from "react";
 import {
-  TableContainer,
-  Table,
   Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
-  InputBase,
-  InputAdornment,
-  Button,
-  Modal,
   TextField,
+  InputAdornment,
   IconButton,
+  TablePagination,
 } from "@mui/material";
-import { FaSearch } from "react-icons/fa";
-import { FiEye } from "react-icons/fi";
-import { IoClose } from "react-icons/io5";
+
+import { FaEye, FaSearch } from "react-icons/fa";
+import ProviderDetailsModal from "../UI/Modals/ProviderDetailsModal";
 
 const providerData = [
   {
-    name: "Provider One",
-    userName: "provider1",
-    email: "provider1@example.com",
-    location: "New York, USA",
-    status: "Active",
-    serviceType: "Mental Health",
+    name: "Dr. Sarah Johnson",
+    userName: "drsarah",
+    email: "sarah.johnson@example.com",
+    location: "New York, NY",
+    status: "pending",
+    serviceCategory: "Mental Health",
     phoneNumber: "(123) 456-7890",
+    experience: "8 years",
+    timeSlot: "9:00 AM - 5:00 PM",
+    serviceDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    skills: ["Cognitive Therapy", "Anxiety Treatment", "Depression Counseling"],
+    description:
+      "Licensed clinical psychologist specializing in anxiety and depression treatment with over 8 years of experience.",
+    pricing: { amount: 150, type: "hourly" },
+    coverImage:
+      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop",
   },
   {
-    name: "Provider Two",
-    userName: "provider2",
-    email: "provider2@example.com",
-    location: "Los Angeles, USA",
-    status: "Inactive",
-    serviceType: "Education",
+    name: "Prof. Michael Chen",
+    userName: "profchen",
+    email: "michael.chen@example.com",
+    location: "Los Angeles, CA",
+    status: "accepted",
+    serviceCategory: "Education",
     phoneNumber: "(987) 654-3210",
+    experience: "12 years",
+    timeSlot: "10:00 AM - 6:00 PM",
+    serviceDays: ["Monday", "Wednesday", "Friday", "Saturday"],
+    skills: ["Mathematics", "Physics", "Computer Science", "Tutoring"],
+    description:
+      "Experienced mathematics and physics professor offering comprehensive tutoring services for students of all levels.",
+    pricing: { amount: 80, type: "hourly" },
+    coverImage:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
   },
   {
-    name: "Provider Three",
-    userName: "provider3",
-    email: "provider3@example.com",
-    location: "Chicago, USA",
-    status: "Pending",
-    serviceType: "Nutrition",
+    name: "Lisa Rodriguez",
+    userName: "lisanutrition",
+    email: "lisa.rodriguez@example.com",
+    location: "Chicago, IL",
+    status: "declined",
+    serviceCategory: "Nutrition",
     phoneNumber: "(555) 123-4567",
+    experience: "5 years",
+    timeSlot: "8:00 AM - 4:00 PM",
+    serviceDays: ["Tuesday", "Thursday", "Saturday"],
+    skills: ["Weight Management", "Dietary Planning", "Sports Nutrition"],
+    description:
+      "Certified nutritionist helping clients achieve their health goals through personalized meal planning and lifestyle changes.",
+    pricing: { amount: 200, type: "monthly" },
+    coverImage:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=300&fit=crop",
   },
   {
-    name: "Provider Four",
-    userName: "provider4",
-    email: "provider4@example.com",
-    location: "Houston, USA",
-    status: "Active",
-    serviceType: "Healthcare",
+    name: "Dr. James Wilson",
+    userName: "drwilson",
+    email: "james.wilson@example.com",
+    location: "Houston, TX",
+    status: "accepted",
+    serviceCategory: "Healthcare",
     phoneNumber: "(800) 234-5678",
+    experience: "15 years",
+    timeSlot: "7:00 AM - 3:00 PM",
+    serviceDays: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ],
+    skills: ["General Practice", "Preventive Care", "Health Consultations"],
+    description:
+      "Board-certified family physician providing comprehensive healthcare services with a focus on preventive medicine.",
+    pricing: { amount: 200, type: "hourly" },
+    coverImage:
+      "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=300&fit=crop",
   },
   {
-    name: "Provider Five",
-    userName: "provider5",
-    email: "provider5@example.com",
-    location: "San Francisco, USA",
-    status: "Inactive",
-    serviceType: "Mental Health",
+    name: "Emma Thompson",
+    userName: "emmatherapy",
+    email: "emma.thompson@example.com",
+    location: "San Francisco, CA",
+    status: "pending",
+    serviceCategory: "Mental Health",
     phoneNumber: "(111) 222-3333",
+    experience: "6 years",
+    timeSlot: "11:00 AM - 7:00 PM",
+    serviceDays: ["Monday", "Wednesday", "Friday"],
+    skills: ["Family Therapy", "Relationship Counseling", "Trauma Recovery"],
+    description:
+      "Licensed marriage and family therapist specializing in relationship counseling and trauma recovery.",
+    pricing: { amount: 1200, type: "monthly" },
+    coverImage:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop",
   },
   {
-    name: "Provider Six",
-    userName: "provider6",
-    email: "provider6@example.com",
-    location: "Miami, USA",
-    status: "Active",
-    serviceType: "Education",
-    phoneNumber: "(444) 555-6666",
-  },
-  {
-    name: "Provider Seven",
-    userName: "provider7",
-    email: "provider7@example.com",
-    location: "Dallas, USA",
-    status: "Pending",
-    serviceType: "Nutrition",
-    phoneNumber: "(777) 888-9999",
-  },
-  {
-    name: "Provider Eight",
-    userName: "provider8",
-    email: "provider8@example.com",
-    location: "Austin, USA",
-    status: "Active",
-    serviceType: "Healthcare",
-    phoneNumber: "(222) 333-4444",
-  },
-  {
-    name: "Provider Nine",
-    userName: "provider9",
-    email: "provider9@example.com",
-    location: "Seattle, USA",
-    status: "Inactive",
-    serviceType: "Mental Health",
-    phoneNumber: "(666) 777-8888",
-  },
-  {
-    name: "Provider Ten",
-    userName: "provider10",
-    email: "provider10@example.com",
-    location: "Denver, USA",
-    status: "Pending",
-    serviceType: "Education",
+    name: "David Park",
+    userName: "davidcoach",
+    email: "david.park@example.com",
+    location: "Seattle, WA",
+    status: "pending",
+    serviceCategory: "Education",
     phoneNumber: "(333) 444-5555",
-  },
-  {
-    name: "Provider Eleven",
-    userName: "provider11",
-    email: "provider11@example.com",
-    location: "Phoenix, USA",
-    status: "Active",
-    serviceType: "Healthcare",
-    phoneNumber: "(123) 654-9870",
-  },
-  {
-    name: "Provider Twelve",
-    userName: "provider12",
-    email: "provider12@example.com",
-    location: "Orlando, USA",
-    status: "Inactive",
-    serviceType: "Mental Health",
-    phoneNumber: "(234) 567-8901",
-  },
-  {
-    name: "Provider Thirteen",
-    userName: "provider13",
-    email: "provider13@example.com",
-    location: "San Diego, USA",
-    status: "Active",
-    serviceType: "Nutrition",
-    phoneNumber: "(345) 678-9012",
-  },
-  {
-    name: "Provider Fourteen",
-    userName: "provider14",
-    email: "provider14@example.com",
-    location: "Los Angeles, USA",
-    status: "Pending",
-    serviceType: "Healthcare",
-    phoneNumber: "(456) 789-0123",
-  },
-  {
-    name: "Provider Fifteen",
-    userName: "provider15",
-    email: "provider15@example.com",
-    location: "New York, USA",
-    status: "Inactive",
-    serviceType: "Mental Health",
-    phoneNumber: "(567) 890-1234",
-  },
-  {
-    name: "Provider Sixteen",
-    userName: "provider16",
-    email: "provider16@example.com",
-    location: "Chicago, USA",
-    status: "Active",
-    serviceType: "Education",
-    phoneNumber: "(678) 901-2345",
-  },
-  {
-    name: "Provider Seventeen",
-    userName: "provider17",
-    email: "provider17@example.com",
-    location: "San Francisco, USA",
-    status: "Inactive",
-    serviceType: "Healthcare",
-    phoneNumber: "(789) 012-3456",
-  },
-  {
-    name: "Provider Eighteen",
-    userName: "provider18",
-    email: "provider18@example.com",
-    location: "Portland, USA",
-    status: "Pending",
-    serviceType: "Mental Health",
-    phoneNumber: "(890) 123-4567",
-  },
-  {
-    name: "Provider Nineteen",
-    userName: "provider19",
-    email: "provider19@example.com",
-    location: "Miami, USA",
-    status: "Active",
-    serviceType: "Nutrition",
-    phoneNumber: "(901) 234-5678",
-  },
-  {
-    name: "Provider Twenty",
-    userName: "provider20",
-    email: "provider20@example.com",
-    location: "Austin, USA",
-    status: "Inactive",
-    serviceType: "Education",
-    phoneNumber: "(012) 345-6789",
+    experience: "7 years",
+    timeSlot: "2:00 PM - 8:00 PM",
+    serviceDays: ["Tuesday", "Wednesday", "Thursday", "Sunday"],
+    skills: ["Language Learning", "Public Speaking", "Academic Writing"],
+    description:
+      "Certified language instructor and communication coach with expertise in ESL and professional development.",
+    pricing: { amount: 500, type: "weekly" },
+    coverImage:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop",
   },
 ];
 
 export default function ProviderManagement() {
+  const [providers, setProviders] = useState(providerData);
   const [searchText, setSearchText] = useState("");
   const [filteredProviders, setFilteredProviders] = useState(providerData);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSearchChange = (e) => {
+  const handleSearch = (e) => {
     const search = e.target.value;
     setSearchText(search);
-    const filtered = providerData.filter(
+    const filtered = providers.filter(
       (provider) =>
         provider.name.toLowerCase().includes(search.toLowerCase()) ||
-        provider.email.toLowerCase().includes(search.toLowerCase())
+        provider.email.toLowerCase().includes(search.toLowerCase()) ||
+        provider.serviceCategory.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredProviders(filtered);
     setPage(0);
   };
+
+  const handleViewDetails = (provider) => {
+    setSelectedProvider(provider);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProvider(null);
+  };
+
+  const handleStatusUpdate = (providerEmail, newStatus) => {
+    const updatedProviders = providers.map((provider) =>
+      provider.email === providerEmail
+        ? { ...provider, status: newStatus }
+        : provider
+    );
+    setProviders(updatedProviders);
+
+    const updatedFiltered = filteredProviders.map((provider) =>
+      provider.email === providerEmail
+        ? { ...provider, status: newStatus }
+        : provider
+    );
+    setFilteredProviders(updatedFiltered);
+
+    handleCloseModal();
+  };
+
+  // Pagination
+  // const totalItems = filteredProviders.length;
+  // const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const endIndex = startIndex + itemsPerPage;
+  // const currentItems = filteredProviders.slice(startIndex, endIndex);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -231,107 +200,81 @@ export default function ProviderManagement() {
     setPage(0);
   };
 
-  const handleOpenModal = (provider) => {
-    setSelectedProvider(provider);
-    setOpenDetailsModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenDetailsModal(false);
-    setSelectedProvider(null);
-  };
-
   return (
-    <div className="px-10 py-8 bg-[#fbfbfb] h-[92vh]">
-      <div className="flex items-center justify-end mb-4">
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
+        padding: "24px",
+      }}
+    >
+      {/* Search Bar */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "24px",
+        }}
+      >
         <TextField
-          sx={{
-            width: 300,
-            "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": {
-                borderColor: "#131927", // Change border color on focus
+          placeholder="Search by name, email or service..."
+          value={searchText}
+          onChange={handleSearch}
+          style={{ width: "325px" }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <FaSearch />
+              </InputAdornment>
+            ),
+            style: {
+              borderRadius: "16px",
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#1976d2",
               },
             },
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "20px", // Apply border-radius to the outline
-            },
-            height: "40px", // Set the height of the TextField
-            "& .MuiInputBase-root": {
-              height: "100%", // Ensure the input base fills the TextField height
-            },
           }}
-          placeholder="Search by Name or Email"
-          value={searchText}
-          onChange={handleSearchChange}
-          startAdornment={
-            <InputAdornment position="start">
-              <FaSearch />
-            </InputAdornment>
-          }
         />
       </div>
 
-      <TableContainer>
+      {/* Table */}
+      <TableContainer
+        component={Paper}
+        style={{
+          borderRadius: "16px",
+          boxShadow: "1px 1px 4px rgba(0,0,0,0.1)",
+        }}
+      >
         <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "#F0F0F0" }}>
+          <TableHead style={{ backgroundColor: "#f0f0f0" }}>
+            <TableRow>
               <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "600",
-                  fontSize: "14px",
-                }}
+                style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
               >
                 Provider Name
               </TableCell>
               <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
+                style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
               >
                 Email
               </TableCell>
               <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
+                style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
               >
                 Location
               </TableCell>
               <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
+                style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
               >
-                Service Type
+                Service Category
               </TableCell>
               <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
+                style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
               >
                 Status
               </TableCell>
               <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
+                style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
               >
                 Action
               </TableCell>
@@ -340,43 +283,55 @@ export default function ProviderManagement() {
           <TableBody>
             {filteredProviders
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((provider) => (
-                <TableRow key={provider.email}>
-                  <TableCell sx={{ textAlign: "center" }}>
+              .map((provider, index) => (
+                <TableRow
+                  key={index}
+                  style={{
+                    "&:hover": { backgroundColor: "#f9f9f9" },
+                    "&:nth-of-type(odd)": { backgroundColor: "#fafafa" },
+                  }}
+                >
+                  <TableCell
+                    style={{
+                      color: "#333",
+                      textAlign: "center",
+                      fontWeight: "600",
+                    }}
+                  >
                     {provider.name}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
+                  <TableCell style={{ color: "#666", textAlign: "center" }}>
                     {provider.email}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
+                  <TableCell style={{ color: "#666", textAlign: "center" }}>
                     {provider.location}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {provider.serviceType}
+                  <TableCell style={{ color: "#666", textAlign: "center" }}>
+                    {provider.serviceCategory}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     <span
+                      className="py-2 px-3 capitalize font-semibold text-white rounded-xl"
                       style={{
-                        padding: "10px 12px",
-                        borderRadius: "12px",
-                        color: "white",
                         backgroundColor:
-                          provider.status.toLowerCase() === "active"
+                          provider.status.toLowerCase() === "accepted"
                             ? "#1EC74F"
-                            : provider.status.toLowerCase() === "inactive"
+                            : provider.status.toLowerCase() === "declined"
                             ? "#EE5252"
                             : provider.status.toLowerCase() === "pending"
                             ? "#FFCC00"
                             : "#9e9e9e",
-                        fontWeight: "600",
                       }}
                     >
                       {provider.status}
                     </span>
-                  </TableCell>{" "}
+                  </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    <IconButton onClick={() => handleOpenModal(provider)}>
-                      <FiEye className="text-lg text-[#131927]" />
+                    <IconButton
+                      onClick={() => handleViewDetails(provider)}
+                      size="small"
+                    >
+                      <FaEye />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -385,6 +340,7 @@ export default function ProviderManagement() {
         </Table>
       </TableContainer>
 
+      {/* Pagination Controls */}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
@@ -395,50 +351,13 @@ export default function ProviderManagement() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      {/* Modal to display provider details */}
-      <Modal
-        open={openDetailsModal}
-        onClose={handleCloseModal}
-        aria-labelledby="provider-details-modal"
-        aria-describedby="modal-to-view-provider-details"
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            backgroundColor: "#FDFDFD",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            padding: "30px",
-            borderRadius: "8px",
-          }}
-        >
-          {selectedProvider && (
-            <div>
-              <div className="flex items-center gap-5">
-                <div className="flex flex-col gap-2">
-                  <p>Provider Name:</p>
-                  <p>Email:</p>
-                  <p>Location:</p>
-                  <p>Service Type:</p>
-                  <p>Status:</p>
-                  <p>Phone Number:</p>
-                </div>
-                <div className="flex flex-col gap-2 font-semibold">
-                  <p>{selectedProvider.name}</p>
-                  <p>{selectedProvider.email}</p>
-                  <p>{selectedProvider.location}</p>
-                  <p>{selectedProvider.serviceType}</p>
-                  <p>{selectedProvider.status}</p>
-                  <p>{selectedProvider.phoneNumber}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Modal>
+      {/* Provider Details Modal */}
+      <ProviderDetailsModal
+        selectedProvider={selectedProvider}
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        handleStatusUpdate={handleStatusUpdate}
+      />
     </div>
   );
 }
