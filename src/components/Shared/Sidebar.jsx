@@ -48,9 +48,9 @@ export default function Sidebar() {
             label: "Provider Management",
           },
           {
-            to: "/client-management",
+            to: "/user-management",
             icon: <FaRegUser className=" lg:text-2xl" />,
-            label: "Client Management",
+            label: "User Management",
           },
           {
             to: "/order-management",
@@ -73,9 +73,9 @@ export default function Sidebar() {
             label: "Subscription",
           },
           {
-            to: "/reports",
+            to: "/support",
             icon: <LuBookText className=" lg:text-2xl" />,
-            label: "Reports",
+            label: "Support E-Mail",
           },
           {
             to: "/settings",

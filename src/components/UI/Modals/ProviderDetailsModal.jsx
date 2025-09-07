@@ -82,9 +82,9 @@ export default function ProviderDetailsModal({
                     className="py-2 px-4 capitalize font-semibold text-white rounded-xl text-sm"
                     style={{
                       backgroundColor:
-                        selectedProvider.status.toLowerCase() === "active"
+                        selectedProvider.status.toLowerCase() === "accepted"
                           ? "#1EC74F"
-                          : selectedProvider.status.toLowerCase() === "inactive"
+                          : selectedProvider.status.toLowerCase() === "declined"
                           ? "#EE5252"
                           : selectedProvider.status.toLowerCase() === "pending"
                           ? "#FFCC00"

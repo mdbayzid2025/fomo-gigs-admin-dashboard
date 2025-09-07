@@ -15,12 +15,12 @@ import TermsAndConditions from "../Dashboard/Settings/TermsAndConditions";
 import AboutUs from "../Dashboard/Settings/AboutUs";
 import PrivacyPolicy from "../Dashboard/Settings/PrivacyPolicy";
 import ProviderManagement from "../Dashboard/ProviderManagement";
-import ClientManagement from "../Dashboard/ClientManagement";
 import OrderManagement from "../Dashboard/OrderManagement";
 import EventManagement from "../Dashboard/EventManagement";
 import SocialManagement from "../Dashboard/SocialManagement";
 import Subscription from "../Dashboard/Subscription";
-import Reports from "../Dashboard/Reports";
+import UserManagement from "../Dashboard/UserManagement";
+import SupportEMail from "../Dashboard/SupportEMail";
 
 const router = createBrowserRouter([
   {
@@ -60,8 +60,8 @@ const router = createBrowserRouter([
             element: <ProviderManagement />,
           },
           {
-            path: "client-management",
-            element: <ClientManagement />,
+            path: "user-management",
+            element: <UserManagement />,
           },
           {
             path: "order-management",
@@ -80,8 +80,8 @@ const router = createBrowserRouter([
             element: <Subscription />,
           },
           {
-            path: "reports",
-            element: <Reports />,
+            path: "support",
+            element: <SupportEMail />,
           },
           {
             path: "settings",
