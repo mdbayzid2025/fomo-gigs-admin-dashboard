@@ -13,12 +13,16 @@ import {
   Modal,
   TextField,
   IconButton,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Box,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 
-// Updated user data
 const userData = [
   {
     userName: "John Doe",
@@ -26,6 +30,26 @@ const userData = [
     userLocation: "New York, USA",
     userStatus: "Active",
     userPhoneNumber: "(123) 456-7890",
+    profilePicture:
+      "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg",
+    bio: "Avid traveler and tech enthusiast. Exploring the world one city at a time.",
+    followers: 3500,
+    following: 800,
+    createdAt: "2020-01-15",
+    lastActive: "2025-09-06",
+    dateOfBirth: "1990-05-14",
+    socialLinks: {
+      instagram: "https://www.instagram.com/johndoe",
+      twitter: "https://www.twitter.com/johndoe",
+      linkedin: "https://www.linkedin.com/in/johndoe",
+    },
+    profileStatus: "Living the dream!",
+    profileViews: 12345,
+    totalPosts: 98,
+    profileCompletion: 85,
+    membershipLevel: "Premium",
+    accountVerification: "Verified",
+    interests: ["Travel", "Technology", "Photography", "Cycling"],
   },
   {
     userName: "Jane Smith",
@@ -33,6 +57,25 @@ const userData = [
     userLocation: "Los Angeles, USA",
     userStatus: "Inactive",
     userPhoneNumber: "(987) 654-3210",
+    profilePicture:
+      "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg",
+    bio: "Content creator and digital marketing strategist.",
+    followers: 1200,
+    following: 300,
+    createdAt: "2018-11-20",
+    lastActive: "2025-06-15",
+    dateOfBirth: "1985-08-22",
+    socialLinks: {
+      instagram: "https://www.instagram.com/janesmith",
+      twitter: "https://www.twitter.com/janesmith",
+    },
+    profileStatus: "Helping businesses grow online.",
+    profileViews: 8976,
+    totalPosts: 150,
+    profileCompletion: 90,
+    membershipLevel: "VIP",
+    accountVerification: "Verified",
+    interests: ["Digital Marketing", "Fitness", "Food Blogging"],
   },
   {
     userName: "Robert Johnson",
@@ -40,6 +83,24 @@ const userData = [
     userLocation: "Chicago, USA",
     userStatus: "Pending",
     userPhoneNumber: "(555) 123-4567",
+    profilePicture:
+      "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg",
+    bio: "Check out my latest work!",
+    followers: 2500,
+    following: 500,
+    createdAt: "2022-02-10",
+    lastActive: "2025-08-25",
+    dateOfBirth: "1992-03-03",
+    socialLinks: {
+      instagram: "https://www.instagram.com/robertjohnson",
+    },
+    profileStatus: "Let’s create something amazing!",
+    profileViews: 3200,
+    totalPosts: 45,
+    profileCompletion: 70,
+    membershipLevel: "Free",
+    accountVerification: "Not Verified",
+    interests: ["Music", "Art", "Video Production"],
   },
   {
     userName: "Mary Williams",
@@ -47,6 +108,25 @@ const userData = [
     userLocation: "Austin, USA",
     userStatus: "Active",
     userPhoneNumber: "(800) 234-5678",
+    profilePicture:
+      "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg",
+    bio: "Fitness enthusiast. Let's keep moving!",
+    followers: 8000,
+    following: 1200,
+    createdAt: "2019-06-05",
+    lastActive: "2025-09-05",
+    dateOfBirth: "1993-11-12",
+    socialLinks: {
+      instagram: "https://www.instagram.com/marywilliams",
+      twitter: "https://www.twitter.com/marywilliams",
+    },
+    profileStatus: "Stronger every day!",
+    profileViews: 15000,
+    totalPosts: 240,
+    profileCompletion: 95,
+    membershipLevel: "VIP",
+    accountVerification: "Verified",
+    interests: ["Fitness", "Yoga", "Nutrition", "Meditation"],
   },
   {
     userName: "Patricia Brown",
@@ -54,8 +134,25 @@ const userData = [
     userLocation: "Dallas, USA",
     userStatus: "Inactive",
     userPhoneNumber: "(111) 222-3333",
+    profilePicture:
+      "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg",
+    bio: "Exploring the world, one step at a time.",
+    followers: 4500,
+    following: 1300,
+    createdAt: "2021-03-11",
+    lastActive: "2025-07-30",
+    dateOfBirth: "1995-07-21",
+    socialLinks: {
+      instagram: "https://www.instagram.com/patriciabrown",
+    },
+    profileStatus: "Adventure is out there!",
+    profileViews: 9850,
+    totalPosts: 120,
+    profileCompletion: 88,
+    membershipLevel: "Premium",
+    accountVerification: "Not Verified",
+    interests: ["Travel", "Photography", "Writing"],
   },
-  // Add more users as necessary
 ];
 
 export default function UserManagement() {
@@ -105,15 +202,15 @@ export default function UserManagement() {
             width: 300,
             "& .MuiOutlinedInput-root": {
               "&.Mui-focused fieldset": {
-                borderColor: "#131927", // Change border color on focus
+                borderColor: "#131927",
               },
             },
             "& .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "20px", // Apply border-radius to the outline
+              borderRadius: "20px",
             },
-            height: "40px", // Set the height of the TextField
+            height: "40px",
             "& .MuiInputBase-root": {
-              height: "100%", // Ensure the input base fills the TextField height
+              height: "100%",
             },
           }}
           placeholder="Search by user Name or Email"
@@ -131,54 +228,19 @@ export default function UserManagement() {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#F0F0F0" }}>
-              <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "600",
-                  fontSize: "14px",
-                }}
-              >
+              <TableCell sx={{ textAlign: "center", fontWeight: "600" }}>
                 User Name
               </TableCell>
-              <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Email
               </TableCell>
-              <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Location
               </TableCell>
-              <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Status
               </TableCell>
-              <TableCell
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
                 Action
               </TableCell>
             </TableRow>
@@ -239,44 +301,123 @@ export default function UserManagement() {
       />
 
       {/* Modal to display user details */}
-      <Modal
-        open={openDetailsModal}
-        onClose={handleCloseModal}
-        aria-labelledby="user-details-modal"
-        aria-describedby="modal-to-view-user-details"
-      >
+      <Modal open={openDetailsModal} onClose={handleCloseModal}>
+        {/* Overlay & centering */}
+        {/* <div className="fixed inset-0 grid place-items-center p-4"> */}
+        {/* Modal panel */}
         <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            backgroundColor: "#FDFDFD",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            padding: "30px",
-            borderRadius: "8px",
-          }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  bg-white rounded-2xl shadow-lg outline-none p-6 md:p-8 max-h-[85vh] overflow-y-auto animate-fadeIn
+      "
         >
           {selecteduser && (
-            <div>
-              <div className="flex items-center gap-5">
-                <div className="flex flex-col gap-2">
-                  <p>User Name:</p>
-                  <p>Email:</p>
-                  <p>Location:</p>
-                  <p>Status:</p>
-                  <p>Phone Number:</p>
-                </div>
-                <div className="flex flex-col gap-2 font-semibold">
-                  <p>{selecteduser.userName}</p>
-                  <p>{selecteduser.userEmail}</p>
-                  <p>{selecteduser.userLocation}</p>
-                  <p>{selecteduser.userStatus}</p>
-                  <p>{selecteduser.userPhoneNumber}</p>
-                </div>
-              </div>
-            </div>
+            <CardContent className="p-0">
+              <Typography variant="h5" gutterBottom>
+                {selecteduser.userName}
+              </Typography>
+
+              <Box className="flex justify-center mb-4">
+                <img
+                  src={selecteduser.profilePicture}
+                  alt={selecteduser.userName}
+                  className="size-24 sm:size-32 md:size-40 lg:size-48 rounded-full object-cover"
+                />
+              </Box>
+
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                gutterBottom
+              >
+                {selecteduser.userEmail}
+              </Typography>
+
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Bio:</strong> {selecteduser.bio}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Location:</strong> {selecteduser.userLocation}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Phone Number:</strong> {selecteduser.userPhoneNumber}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Followers:</strong> {selecteduser.followers}{" "}
+                <strong>Following:</strong> {selecteduser.following}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Account Created:</strong> {selecteduser.createdAt}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Last Active:</strong> {selecteduser.lastActive}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Profile Views:</strong> {selecteduser.profileViews}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mb-1"
+              >
+                <strong>Profile Completion:</strong>{" "}
+                {selecteduser.profileCompletion}%
+              </Typography>
+
+              <Typography variant="body2" color="textSecondary">
+                <strong>Social Links:</strong>{" "}
+                <a
+                  href={selecteduser.socialLinks?.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Instagram
+                </a>
+                {", "}
+                <a
+                  href={selecteduser.socialLinks?.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Twitter
+                </a>
+              </Typography>
+            </CardContent>
           )}
         </div>
       </Modal>
