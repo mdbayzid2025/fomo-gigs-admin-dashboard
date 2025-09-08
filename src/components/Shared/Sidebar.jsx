@@ -9,6 +9,7 @@ import { FaRegCalendar } from "react-icons/fa";
 import { HiOutlinePresentationChartLine } from "react-icons/hi";
 import { LuBookText } from "react-icons/lu";
 import { IoDiamondOutline } from "react-icons/io5";
+import { TbMessageReport } from "react-icons/tb";
 
 import { Link, NavLink } from "react-router-dom";
 
@@ -76,6 +77,11 @@ export default function Sidebar() {
             to: "/support",
             icon: <LuBookText className=" lg:text-2xl" />,
             label: "Support E-Mail",
+          },
+          {
+            to: "/report-management",
+            icon: <TbMessageReport className=" lg:text-2xl" />,
+            label: "Manage Reports",
           },
           {
             to: "/settings",
