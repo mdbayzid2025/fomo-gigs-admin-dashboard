@@ -21,7 +21,7 @@ import SocialManagement from "../Dashboard/SocialManagement";
 import Subscription from "../Dashboard/Subscription";
 import UserManagement from "../Dashboard/UserManagement";
 import SupportEMail from "../Dashboard/SupportEMail";
-import ReporteManagement from "../Dashboard/ReporteManagement";
+import ReportManagement from "../Dashboard/ReportManagement";
 
 const router = createBrowserRouter([
   {
@@ -86,7 +86,7 @@ const router = createBrowserRouter([
           },
           {
             path: "report-management",
-            element: <ReporteManagement />,
+            element: <ReportManagement />,
           },
           {
             path: "settings",

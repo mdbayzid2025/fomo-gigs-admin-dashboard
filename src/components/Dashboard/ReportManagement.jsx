@@ -12,6 +12,8 @@ import {
   Modal,
   Box,
   InputAdornment,
+  Button,
+  Snackbar,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
@@ -53,52 +55,18 @@ const reportedPosts = [
     device: "Samsung Galaxy",
     platform: "TikTok",
   },
-  {
-    postId: "POST123458",
-    userName: "alice_wonder",
-    userProfile:
-      "https://www.google.com/url?sa=i&url=https%3A%2F%2Favatar-placeholder.iran.liara.run%2F&psig=AOvVaw0yvwSENQR-UZmd2OYAJ2Fu&ust=1757397439497000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOjAg-G9yI8DFQAAAAAdAAAAABAE",
-    userEmail: "alice_wonder@example.com",
-    followers: 2500,
-    content: "https://via.placeholder.com/800x400", // Placeholder image link
-    contentType: "Image",
-    reportReason: "Hate Speech",
-    status: "Pending",
-    timestamp: "2025-09-13T08:30:00",
-    likes: 350,
-    comments: 120,
-    shares: 47,
-    location: "Los Angeles, USA",
-    device: "Google Pixel",
-    platform: "Instagram",
-  },
-  {
-    postId: "POST123459",
-    userName: "bob_the_builder",
-    userProfile: "https://www.example.com/images/bob_the_builder.jpg",
-    userEmail: "bob_the_builder@example.com",
-    followers: 4500,
-    content: "https://www.vimeo.com/123456789", // Vimeo video link
-    contentType: "Reel",
-    reportReason: "Spam",
-    status: "Reviewed",
-    timestamp: "2025-09-12T16:45:00",
-    likes: 420,
-    comments: 30,
-    shares: 56,
-    location: "Chicago, USA",
-    device: "OnePlus 9",
-    platform: "Vimeo",
-  },
+  // Additional reported posts...
 ];
 
-export default function ReporteManagement() {
+export default function ReportManagement() {
   const [searchText, setSearchText] = useState("");
   const [filteredPosts, setFilteredPosts] = useState(reportedPosts);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false); // For action confirmation
+  const [actionMessage, setActionMessage] = useState(""); // Action message for the snackbar
 
   const handleSearchChange = (e) => {
     const search = e.target.value;
@@ -127,6 +95,17 @@ export default function ReporteManagement() {
   const handleCloseModal = () => {
     setOpenDetailsModal(false);
     setSelectedPost(null);
+  };
+
+  const handleManagePost = (postId, newStatus) => {
+    // Update the post status (mark as Reviewed, Resolved, etc.)
+    const updatedPosts = filteredPosts.map((post) =>
+      post.postId === postId ? { ...post, status: newStatus } : post
+    );
+    setFilteredPosts(updatedPosts);
+    setActionMessage(`Post marked as ${newStatus}`);
+    setOpenSnackbar(true);
+    handleCloseModal();
   };
 
   // Format timestamp helper
@@ -364,10 +343,40 @@ export default function ReporteManagement() {
                   <span>{selectedPost.platform}</span>
                 </div>
               </div>
+
+              {/* Action Buttons in Modal */}
+              <div className="flex justify-end gap-4">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    handleManagePost(selectedPost.postId, "Reviewed")
+                  }
+                >
+                  Mark as Reviewed
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() =>
+                    handleManagePost(selectedPost.postId, "Resolved")
+                  }
+                >
+                  Mark as Resolved
+                </Button>
+              </div>
             </div>
           )}
         </Box>
       </Modal>
+
+      {/* Snackbar for action confirmation */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        message={actionMessage}
+      />
     </div>
   );
 }
