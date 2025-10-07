@@ -1,6 +1,7 @@
 import { Button, IconButton, Modal, TextField } from "@mui/material";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa";
 
 import { FiPlus } from "react-icons/fi";
 
@@ -166,8 +167,8 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-[90%] mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -190,7 +191,7 @@ export default function SubscriptionPage() {
               fontSize: "14px",
               fontWeight: 600,
               ":hover": {
-                bgcolor: "#155dfc",
+                bgcolor: "#131927",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                 transform: "scale(1.05)",
               },
@@ -203,11 +204,11 @@ export default function SubscriptionPage() {
         </div>
 
         {/* Subscription Cards Flex Layout */}
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap gap-6 ">
           {subscriptions.map((subscription) => (
             <div
               key={subscription.subscriptionId}
-              className="rounded-xl p-4 relative shadow-sm border border-gray-200 hover:shadow-md transition-shadow w-80 flex-shrink-0"
+              className="rounded-xl p-4 relative shadow-sm bg-white border border-gray-200 hover:shadow-md transition-shadow w-80 flex-shrink-0"
             >
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-xl font-bold text-[#131927]">
@@ -238,7 +239,7 @@ export default function SubscriptionPage() {
                     key={index}
                     className="flex items-center gap-2 text-xs text-gray-700"
                   >
-                    <IoClose
+                    <FaCheck
                       size={12}
                       className="text-green-500 flex-shrink-0"
                     />
@@ -266,7 +267,7 @@ export default function SubscriptionPage() {
                   width: "80px",
                   height: "30px",
                   ":hover": {
-                    bgcolor: "#155dfc",
+                    bgcolor: "#131927",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                     transform: "scale(1.05)",
                   },
@@ -347,28 +348,30 @@ export default function SubscriptionPage() {
 
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Features
-                </label>
-                <Button
-                  onClick={addFeature}
-                  sx={{
-                    textTransform: "none",
-                    bgcolor: "#0095FF",
-                    color: "white",
-                    width: "120px",
-                    height: "30px",
-                    ":hover": {
-                      bgcolor: "#155dfc",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                      transform: "scale(1.05)",
-                    },
-                    transition: "all 0.3s ease",
-                  }}
-                  className="text-sm text-blue-600 hover:text-blue-700 mb-2"
-                >
-                  + Add Feature
-                </Button>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Features
+                  </label>
+                  <Button
+                    onClick={addFeature}
+                    sx={{
+                      textTransform: "none",
+                      bgcolor: "#0095FF",
+                      color: "white",
+                      width: "120px",
+                      height: "30px",
+                      ":hover": {
+                        bgcolor: "#131927",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                        transform: "scale(1.05)",
+                      },
+                      transition: "all 0.3s ease",
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-700 mb-2"
+                  >
+                    + Add Feature
+                  </Button>
+                </div>
                 {newSubscription.features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 mt-2">
                     <TextField
@@ -412,7 +415,7 @@ export default function SubscriptionPage() {
                   outline: "1px solid black",
                   color: "black",
                   width: "80px",
-                  height: "40px",
+                  height: "38px",
                   ":hover": {
                     bgcolor: "#eee",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
@@ -432,7 +435,7 @@ export default function SubscriptionPage() {
                   width: "140px",
                   height: "40px",
                   ":hover": {
-                    bgcolor: "#155dfc",
+                    bgcolor: "#131927",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                     transform: "scale(1.05)",
                   },

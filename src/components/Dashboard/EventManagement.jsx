@@ -267,10 +267,15 @@ export default function EventManagement() {
       </div>
 
       {/* Table */}
-      <TableContainer>
+      <TableContainer
+        style={{
+          borderRadius: "16px",
+          boxShadow: "1px 1px 4px rgba(0,0,0,0.1)",
+        }}
+      >
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#F0F0F0" }}>
+            <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
               {[
                 "Event ID",
                 "Event Name",
@@ -393,9 +398,7 @@ export default function EventManagement() {
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs tracking-wide text-gray-500">
-                    Ends
-                  </p>
+                  <p className="text-xs tracking-wide text-gray-500">Ends</p>
                   <p className="font-medium">
                     {formatDT(selectedEvent.endTime, selectedEvent.timezone)} (
                     {selectedEvent.timezone})

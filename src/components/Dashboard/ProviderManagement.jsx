@@ -246,7 +246,7 @@ export default function ProviderManagement() {
         }}
       >
         <Table>
-          <TableHead style={{ backgroundColor: "#f0f0f0" }}>
+          <TableHead style={{ backgroundColor: "#e0e0e0" }}>
             <TableRow>
               <TableCell
                 style={{ fontWeight: 600, color: "#333", textAlign: "center" }}
