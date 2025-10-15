@@ -9,12 +9,12 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdOutlineLock } from "react-icons/md";
-// import { useSignInMutation } from "../../Redux/api/authApi";
-// import { toast } from "sonner";
+import { toast } from "sonner";
+import { useLogInMutation } from "../Redux/api/authApi";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  // const [login] = useSignInMutation();
+  const [login] = useLogInMutation();
 
   const onFinish = async (e) => {
     e.preventDefault();
@@ -26,24 +26,23 @@ const SignIn = () => {
     };
 
     console.log("signIn Data", values);
-    navigate("/", { replace: true });
-    // try {
-    //   const res = await login(data).unwrap();
-    //   localStorage.setItem("accessToken", res?.data?.accessToken);
-    //   localStorage.setItem("refreshToken", res?.data?.refreshToken);
+    try {
+      const res = await login(values).unwrap();
+      sessionStorage.setItem("accessToken", res?.data?.accessToken);
+      sessionStorage.setItem("refreshToken", res?.data?.refreshToken);
 
-    //   if (res.success) {
-    //     toast.success("Login Successfully!");
-    //     navigate("/");
-    //   } else {
-    //     toast.error("Login Error.");
-    //   }
-    // } catch (error) {
-    //   console.error("Error user login:", error);
-    //   if (error.data) {
-    //     toast.error("Something went wrong while logging in.");
-    //   }
-    // }
+      if (res.success) {
+        toast.success("Login Successfully!");
+        navigate("/");
+      } else {
+        toast.error("Login Error.");
+      }
+    } catch (error) {
+      console.error("Error user login:", error);
+      if (error.data) {
+        toast.error("Something went wrong while logging in.");
+      }
+    }
   };
 
   return (
@@ -72,7 +71,9 @@ const SignIn = () => {
                 variant="outlined"
                 placeholder="Enter your email"
                 InputProps={{
-                  startAdornment: <HiOutlineMailOpen />,
+                  startAdornment: (
+                    <HiOutlineMailOpen className="mr-2 text-[#2454c4]" />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -100,7 +101,9 @@ const SignIn = () => {
                 variant="outlined"
                 placeholder="Enter your password"
                 InputProps={{
-                  startAdornment: <MdOutlineLock />,
+                  startAdornment: (
+                    <MdOutlineLock className="mr-2 text-[#2454c4]" />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
