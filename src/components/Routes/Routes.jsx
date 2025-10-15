@@ -22,6 +22,7 @@ import Subscription from "../Dashboard/Subscription";
 import UserManagement from "../Dashboard/UserManagement";
 import SupportEMail from "../Dashboard/SupportEMail";
 import ReportManagement from "../Dashboard/ReportManagement";
+import ProtectedRoute from "../../utils/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,11 @@ const router = createBrowserRouter([
       },
       {
         path: "",
-        element: <DashboardLayout />,
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "/",
