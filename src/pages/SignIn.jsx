@@ -5,16 +5,26 @@ import {
   FormControlLabel,
   Container,
   Grid,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdOutlineLock } from "react-icons/md";
+import { IoMdEyeOff } from "react-icons/io";
+import { IoMdEye } from "react-icons/io";
 import { toast } from "sonner";
 import { useLogInMutation } from "../Redux/api/authApi";
+import { useState } from "react";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [login] = useLogInMutation();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const onFinish = async (e) => {
     e.preventDefault();
@@ -85,6 +95,7 @@ const SignIn = () => {
                     color: "#0095FF", // Change label color on focus (optional)
                   },
                   height: "50px", // Set the height of the TextField
+
                   "& .MuiInputBase-root": {
                     height: "100%", // Ensure the input base fills the TextField height
                   },
@@ -94,16 +105,35 @@ const SignIn = () => {
               <TextField
                 label="Password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 fullWidth
                 required
                 margin="normal"
                 variant="outlined"
                 placeholder="Enter your password"
-                InputProps={{
-                  startAdornment: (
-                    <MdOutlineLock className="mr-2 text-[#2454c4]" />
-                  ),
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <MdOutlineLock className="mr-2 text-[#2454c4]" />
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                          onClick={handleShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <IoMdEyeOff className="text-[#131927]" />
+                          ) : (
+                            <IoMdEye className="text-[#131927]" />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -121,13 +151,13 @@ const SignIn = () => {
                 }}
               />
 
-              <div className="flex items-center justify-between mt-2">
-                <div className="text-[#131927] font-semibold">
+              <div className="flex items-center justify-end mt-2">
+                {/* <div className="text-[#131927] font-semibold">
                   <FormControlLabel
                     control={<Checkbox name="rememberMe" color="primary" />}
                     label="Remember Me"
                   />
-                </div>
+                </div> */}
                 <div>
                   <Link
                     to="/forgot-password"
