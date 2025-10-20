@@ -1,48 +1,48 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Grid, Typography, Container } from "@mui/material";
 import OTPInput from "react-otp-input";
 import { HiArrowLeft } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
-// import { useVerifyOtpMutation } from "../../Redux/api/authApi";
-// import { toast } from "sonner";
+import { useVerifyOtpMutation } from "../Redux/api/authApi";
+import { toast } from "sonner";
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  //   const [verifyOtp] = useVerifyOtpMutation();
+  const [verifyOtp] = useVerifyOtpMutation();
 
   const handleOTPSubmit = async () => {
-    navigate("/update-password");
-
     if (otp.length < 6) {
-      alert("Please fill in all OTP fields");
+      toast.warning("Please fill in all OTP fields");
       return;
     }
-    // const token = localStorage.getItem("otpToken");
-    // if (!token) {
-    //   alert("Error! Please start the reset process again.");
-    //   navigate("/forgot-password");
-    //   return;
-    // }
-    // try {
-    //   const data = { token, otp };
-    //   const response = await verifyOtp(data).unwrap();
-    //   if (response.success === true) {
-    //     localStorage.setItem(
-    //       "verifiedOtpToken",
-    //       response?.data?.forgetOtpMatchToken
-    //     );
-    //     toast.success("OTP verified successfully!");
-    //     navigate("/reset-password");
-    //   }
-    // } catch (error) {
-    //   console.error("Error verifying OTP:", error);
-    //   if (error.data?.message === "Invalid OTP") {
-    //     toast.error("Invalid OTP. Please try again.");
-    //   } else {
-    //     toast.error("Failed to verify OTP. Please try again.");
-    //   }
-    // }
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      toast.warning("Error! Please start the reset process again.");
+      navigate("/forgot-password");
+      return;
+    }
+    try {
+      const data = { oneTimeCode: otp, email: userEmail };
+      console.log("Verifying OTP:", data);
+      const response = await verifyOtp(data).unwrap();
+      console.log("otp verification response", response);
+      if (response.success === true) {
+        localStorage.setItem("verifiedOtpToken", response?.data);
+        toast.success("OTP verified successfully!");
+        navigate("/update-password");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      if (error.data?.message === "Invalid OTP") {
+        toast.error("Invalid OTP. Please try again.");
+      }
+      if (error.data?.message === "You provided wrong otp") {
+        toast.error("Invalid OTP");
+      } else {
+        toast.error("Failed to verify OTP. Please try again.");
+      }
+    }
   };
 
   return (
