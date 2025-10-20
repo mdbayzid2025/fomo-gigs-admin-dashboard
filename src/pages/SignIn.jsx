@@ -5,16 +5,26 @@ import {
   FormControlLabel,
   Container,
   Grid,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdOutlineLock } from "react-icons/md";
-// import { useSignInMutation } from "../../Redux/api/authApi";
-// import { toast } from "sonner";
+import { IoMdEyeOff } from "react-icons/io";
+import { IoMdEye } from "react-icons/io";
+import { toast } from "sonner";
+import { useLogInMutation } from "../Redux/api/authApi";
+import { useState } from "react";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  // const [login] = useSignInMutation();
+  const [login] = useLogInMutation();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const onFinish = async (e) => {
     e.preventDefault();
@@ -26,24 +36,23 @@ const SignIn = () => {
     };
 
     console.log("signIn Data", values);
-    navigate("/", { replace: true });
-    // try {
-    //   const res = await login(data).unwrap();
-    //   localStorage.setItem("accessToken", res?.data?.accessToken);
-    //   localStorage.setItem("refreshToken", res?.data?.refreshToken);
+    try {
+      const res = await login(values).unwrap();
+      sessionStorage.setItem("accessToken", res?.data?.accessToken);
+      sessionStorage.setItem("refreshToken", res?.data?.refreshToken);
 
-    //   if (res.success) {
-    //     toast.success("Login Successfully!");
-    //     navigate("/");
-    //   } else {
-    //     toast.error("Login Error.");
-    //   }
-    // } catch (error) {
-    //   console.error("Error user login:", error);
-    //   if (error.data) {
-    //     toast.error("Something went wrong while logging in.");
-    //   }
-    // }
+      if (res.success) {
+        toast.success("Login Successfully!");
+        navigate("/");
+      } else {
+        toast.error("Login Error.");
+      }
+    } catch (error) {
+      console.error("Error user login:", error);
+      if (error.data) {
+        toast.error("Something went wrong while logging in.");
+      }
+    }
   };
 
   return (
@@ -72,7 +81,9 @@ const SignIn = () => {
                 variant="outlined"
                 placeholder="Enter your email"
                 InputProps={{
-                  startAdornment: <HiOutlineMailOpen />,
+                  startAdornment: (
+                    <HiOutlineMailOpen className="mr-2 text-[#2454c4]" />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -84,6 +95,7 @@ const SignIn = () => {
                     color: "#0095FF", // Change label color on focus (optional)
                   },
                   height: "50px", // Set the height of the TextField
+
                   "& .MuiInputBase-root": {
                     height: "100%", // Ensure the input base fills the TextField height
                   },
@@ -93,14 +105,35 @@ const SignIn = () => {
               <TextField
                 label="Password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 fullWidth
                 required
                 margin="normal"
                 variant="outlined"
                 placeholder="Enter your password"
-                InputProps={{
-                  startAdornment: <MdOutlineLock />,
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <MdOutlineLock className="mr-2 text-[#2454c4]" />
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                          onClick={handleShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <IoMdEyeOff className="text-[#131927]" />
+                          ) : (
+                            <IoMdEye className="text-[#131927]" />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -118,13 +151,13 @@ const SignIn = () => {
                 }}
               />
 
-              <div className="flex items-center justify-between mt-2">
-                <div className="text-[#131927] font-semibold">
+              <div className="flex items-center justify-end mt-2">
+                {/* <div className="text-[#131927] font-semibold">
                   <FormControlLabel
                     control={<Checkbox name="rememberMe" color="primary" />}
                     label="Remember Me"
                   />
-                </div>
+                </div> */}
                 <div>
                   <Link
                     to="/forgot-password"

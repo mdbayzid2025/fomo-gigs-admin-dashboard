@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import {
   Button,
@@ -9,12 +10,14 @@ import {
   InputAdornment,
   IconButton,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
-import { MdOutlineLock } from "react-icons/md";
 import { HiArrowLeft } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import { IoIosEyeOff } from "react-icons/io";
+import { toast } from "sonner";
+import { useUpdatePasswordMutation } from "../Redux/api/authApi";
 
 const UpdatePassword = () => {
   const navigate = useNavigate();
@@ -26,22 +29,56 @@ const UpdatePassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [resetPassword, { isLoading: updatingPassword }] =
+    useUpdatePasswordMutation();
+
   const handleShowNewPassword = () => setShowNewPassword((prev) => !prev);
   const handleShowConfirmPassword = () =>
     setShowConfirmPassword((prev) => !prev);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validation for password match
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+    if (!newPassword || !confirmPassword) {
+      toast.error("Please fill out both password fields.");
       return;
     }
-    setError("");
-    console.log("Password change request submitted");
-    navigate("/sign-in", { replace: true });
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    const data = {
+      newPassword,
+      confirmPassword,
+    };
+
+    try {
+      const response = await resetPassword(data).unwrap();
+      console.log("update pass response", response);
+
+      if (response.success) {
+        toast.success("Password Updated Successfully");
+        setNewPassword("");
+        setConfirmPassword("");
+        navigate("/sign-in");
+      } else {
+        toast.error(response.message || "Failed to reset password.");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to reset password.");
+    }
   };
+
+  if (updatingPassword) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#fbfbfb] min-h-[100vh]">
