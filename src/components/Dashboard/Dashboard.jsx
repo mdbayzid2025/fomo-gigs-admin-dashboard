@@ -3,29 +3,71 @@ import { LuCalendar } from "react-icons/lu";
 import { GoGraph } from "react-icons/go";
 import { GoDotFill } from "react-icons/go";
 
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 
-import UserStatisticsBarChart from "../UI/Chart/UserStatisticsBarChart";
-import MatchedGrowthAreaChart from "../UI/Chart/MatchedGrowthAreaChart";
-import SubscriptionPieChart from "../UI/Chart/SubscriptionPieChart";
+import UserGrowthBarChart from "../UI/Chart/UserGrowthBarChart";
+import EventsGrowthAreaChart from "../UI/Chart/EventsGrowthAreaChart";
+
+import {
+  useGetEventsGrowthDataQuery,
+  useGetStatsDataQuery,
+  useGetUserGrowthDataQuery,
+} from "../../Redux/api/overviewApi";
 
 export default function Dashboard() {
   const [userGrowthByYear, setUserGrowthByYear] = useState(2025);
-  const [matchesGrowthByYear, setMatchesGrowthByYear] = useState(2025);
-  const [journeyStatByYear, setJourneyStatByYear] = useState(2025);
+  const [eventsGrowthByYear, setEventsGrowthByYear] = useState(2025);
+
+  const {
+    data: allStatsData,
+    isLoading: loadingStatsData,
+    isError: statDataError,
+  } = useGetStatsDataQuery();
+  const statsData = allStatsData?.data;
+  // console.log("statsData", statsData);
+
+  const {
+    data: allUserGrowthData,
+    isLoading: loadingGrowthData,
+    isError: growthDataError,
+  } = useGetUserGrowthDataQuery(userGrowthByYear);
+  const growthData = allUserGrowthData?.data;
+  // console.log("growthData", growthData);
+
+  const {
+    data: allEventsGrowthData,
+    isLoading: loadingEventsData,
+    isError: eventsDataError,
+  } = useGetEventsGrowthDataQuery(eventsGrowthByYear);
+  const eventsData = allEventsGrowthData?.data;
+  console.log("eventsData", eventsData);
 
   const handleUserGrowthYearChange = (event) => {
     setUserGrowthByYear(event.target.value);
   };
   const handleMatchesGrowthYearChange = (event) => {
-    setMatchesGrowthByYear(event.target.value);
-  };
-
-  const handleJourneyStatYearChange = (event) => {
-    setJourneyStatByYear(event.target.value);
+    setEventsGrowthByYear(event.target.value);
   };
 
   // console.log("yaaaaaaaaaaaaaaaaaar", year);
+
+  if (loadingStatsData | loadingGrowthData | loadingEventsData) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (statDataError | growthDataError | eventsDataError) {
+    return <p>Something went wrong</p>;
+  }
 
   return (
     <div className="bg-[#fdfdfd] px-10 py-3 h-[92vh] w-full">
@@ -33,15 +75,17 @@ export default function Dashboard() {
         <div className="flex items-center justify-between gap-5">
           <div className="flex flex-col items-center justify-center bg-[#131927] text-white rounded-lg px-8 py-4 w-full h-28">
             <p className="font-medium text-lg">Total User</p>
-            <p className="text-3xl font-semibold">150</p>
+            <p className="text-3xl font-semibold">{statsData?.users}</p>
           </div>
           <div className="flex flex-col items-center justify-center bg-[#131927] text-white rounded-lg px-8 py-4 w-full  h-28">
-            <p className="font-medium text-lg">Total Order</p>
-            <p className="text-3xl font-semibold">50</p>
+            <p className="font-medium text-lg">Service Providers</p>
+            <p className="text-3xl font-semibold">
+              {statsData?.serviceProviders}
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center bg-[#131927] text-white rounded-lg px-8 py-4 w-full  h-28">
             <p className="font-medium text-lg">Total Events</p>
-            <p className="text-3xl font-semibold">12</p>
+            <p className="text-3xl font-semibold"> {statsData?.events}</p>
           </div>
         </div>
       </div>
@@ -72,6 +116,10 @@ export default function Dashboard() {
                   onChange={handleUserGrowthYearChange}
                   className="h-10"
                 >
+                  <MenuItem value={2029}>2029</MenuItem>
+                  <MenuItem value={2028}>2028</MenuItem>
+                  <MenuItem value={2027}>2027</MenuItem>
+                  <MenuItem value={2026}>2026</MenuItem>
                   <MenuItem value={2025}>2025</MenuItem>
                   <MenuItem value={2024}>2024</MenuItem>
                   <MenuItem value={2023}>2023</MenuItem>
@@ -80,7 +128,10 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="mt-5">
-            <UserStatisticsBarChart selectedYear={userGrowthByYear} />
+            <UserGrowthBarChart
+              selectedYear={userGrowthByYear}
+              growthData={growthData}
+            />
           </div>
         </div>
         <div className="flex items-center gap-3 w-full">
@@ -109,11 +160,15 @@ export default function Dashboard() {
                   <Select
                     labelId="revenue-year-label"
                     id="revenue-year-select"
-                    value={matchesGrowthByYear}
+                    value={eventsGrowthByYear}
                     label="Year"
                     onChange={handleMatchesGrowthYearChange}
                     className="h-10"
                   >
+                    <MenuItem value={2029}>2029</MenuItem>
+                    <MenuItem value={2028}>2028</MenuItem>
+                    <MenuItem value={2027}>2027</MenuItem>
+                    <MenuItem value={2026}>2026</MenuItem>
                     <MenuItem value={2025}>2025</MenuItem>
                     <MenuItem value={2024}>2024</MenuItem>
                     <MenuItem value={2023}>2023</MenuItem>
@@ -122,12 +177,15 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex mt-5 h-full">
-              <MatchedGrowthAreaChart selectedYear={matchesGrowthByYear} />
+              <EventsGrowthAreaChart
+                selectedYear={eventsGrowthByYear}
+                eventsData={eventsData}
+              />
             </div>
           </div>
 
           {/* service stats */}
-          <div
+          {/* <div
             className="bg-[#FDF9F7] shadow-xl flex-1 px-5 py-3"
             style={{ minHeight: 330 }}
           >
@@ -145,7 +203,6 @@ export default function Dashboard() {
                       <p>
                         <LuCalendar fontSize={20} />
                       </p>
-                      {/* <p className="text-sm">Year</p> */}
                     </div>
                   </InputLabel>
                   <Select
@@ -184,7 +241,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
