@@ -22,6 +22,8 @@ export default function Header() {
 
   const handleLogout = () => {
     console.log("User logged out");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
     navigate("/sign-in");
     handleClose();
   };

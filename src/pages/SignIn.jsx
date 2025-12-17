@@ -38,8 +38,8 @@ const SignIn = () => {
     console.log("signIn Data", values);
     try {
       const res = await login(values).unwrap();
-      sessionStorage.setItem("accessToken", res?.data?.accessToken);
-      sessionStorage.setItem("refreshToken", res?.data?.refreshToken);
+      console.log("log in response", res);
+      sessionStorage.setItem("accessToken", res?.data?.token);
 
       if (res.success) {
         toast.success("Login Successfully!");
@@ -49,8 +49,13 @@ const SignIn = () => {
       }
     } catch (error) {
       console.error("Error user login:", error);
-      if (error.data) {
-        toast.error("Something went wrong while logging in.");
+      if (error.data.message === "User doesn't exist!") {
+        toast.error("Wrong Email or User doesn't exist !");
+      }
+      if (error.data.message === "Password is incorrect!") {
+        toast.error("Wrong Password !");
+      } else {
+        toast.error("Something went wrong !");
       }
     }
   };
