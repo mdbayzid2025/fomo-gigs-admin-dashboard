@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Paper,
   Table,
@@ -11,146 +11,66 @@ import {
   InputAdornment,
   IconButton,
   TablePagination,
+  CircularProgress,
 } from "@mui/material";
 
 import { FaEye, FaSearch } from "react-icons/fa";
 import ProviderDetailsModal from "../UI/Modals/ProviderDetailsModal";
-
-const providerData = [
-  {
-    name: "Dr. Sarah Johnson",
-    userName: "drsarah",
-    email: "sarah.johnson@example.com",
-    location: "New York, NY",
-    status: "pending",
-    serviceCategory: "Mental Health",
-    phoneNumber: "(123) 456-7890",
-    experience: "8 years",
-    timeSlot: "9:00 AM - 5:00 PM",
-    serviceDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    skills: ["Cognitive Therapy", "Anxiety Treatment", "Depression Counseling"],
-    description:
-      "Licensed clinical psychologist specializing in anxiety and depression treatment with over 8 years of experience.",
-    pricing: { amount: 150, type: "hourly" },
-    coverImage:
-      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Prof. Michael Chen",
-    userName: "profchen",
-    email: "michael.chen@example.com",
-    location: "Los Angeles, CA",
-    status: "accepted",
-    serviceCategory: "Education",
-    phoneNumber: "(987) 654-3210",
-    experience: "12 years",
-    timeSlot: "10:00 AM - 6:00 PM",
-    serviceDays: ["Monday", "Wednesday", "Friday", "Saturday"],
-    skills: ["Mathematics", "Physics", "Computer Science", "Tutoring"],
-    description:
-      "Experienced mathematics and physics professor offering comprehensive tutoring services for students of all levels.",
-    pricing: { amount: 80, type: "hourly" },
-    coverImage:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Lisa Rodriguez",
-    userName: "lisanutrition",
-    email: "lisa.rodriguez@example.com",
-    location: "Chicago, IL",
-    status: "declined",
-    serviceCategory: "Nutrition",
-    phoneNumber: "(555) 123-4567",
-    experience: "5 years",
-    timeSlot: "8:00 AM - 4:00 PM",
-    serviceDays: ["Tuesday", "Thursday", "Saturday"],
-    skills: ["Weight Management", "Dietary Planning", "Sports Nutrition"],
-    description:
-      "Certified nutritionist helping clients achieve their health goals through personalized meal planning and lifestyle changes.",
-    pricing: { amount: 200, type: "monthly" },
-    coverImage:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Dr. James Wilson",
-    userName: "drwilson",
-    email: "james.wilson@example.com",
-    location: "Houston, TX",
-    status: "accepted",
-    serviceCategory: "Healthcare",
-    phoneNumber: "(800) 234-5678",
-    experience: "15 years",
-    timeSlot: "7:00 AM - 3:00 PM",
-    serviceDays: [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ],
-    skills: ["General Practice", "Preventive Care", "Health Consultations"],
-    description:
-      "Board-certified family physician providing comprehensive healthcare services with a focus on preventive medicine.",
-    pricing: { amount: 200, type: "hourly" },
-    coverImage:
-      "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Emma Thompson",
-    userName: "emmatherapy",
-    email: "emma.thompson@example.com",
-    location: "San Francisco, CA",
-    status: "pending",
-    serviceCategory: "Mental Health",
-    phoneNumber: "(111) 222-3333",
-    experience: "6 years",
-    timeSlot: "11:00 AM - 7:00 PM",
-    serviceDays: ["Monday", "Wednesday", "Friday"],
-    skills: ["Family Therapy", "Relationship Counseling", "Trauma Recovery"],
-    description:
-      "Licensed marriage and family therapist specializing in relationship counseling and trauma recovery.",
-    pricing: { amount: 1200, type: "monthly" },
-    coverImage:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop",
-  },
-  {
-    name: "David Park",
-    userName: "davidcoach",
-    email: "david.park@example.com",
-    location: "Seattle, WA",
-    status: "pending",
-    serviceCategory: "Education",
-    phoneNumber: "(333) 444-5555",
-    experience: "7 years",
-    timeSlot: "2:00 PM - 8:00 PM",
-    serviceDays: ["Tuesday", "Wednesday", "Thursday", "Sunday"],
-    skills: ["Language Learning", "Public Speaking", "Academic Writing"],
-    description:
-      "Certified language instructor and communication coach with expertise in ESL and professional development.",
-    pricing: { amount: 500, type: "weekly" },
-    coverImage:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop",
-  },
-];
+import {
+  useChangeProviderStatusMutation,
+  useGetServiceProvidersQuery,
+} from "../../Redux/api/usersApi";
+import { useGetAllServicesQuery } from "../../Redux/api/serviceApi";
 
 export default function ProviderManagement() {
-  const [providers, setProviders] = useState(providerData);
   const [searchText, setSearchText] = useState("");
-  const [filteredProviders, setFilteredProviders] = useState(providerData);
+  const [filteredProviders, setFilteredProviders] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const {
+    data: allProviderData,
+    isLoading: loadingProvidersData,
+    isError: errorProvidersData,
+    refetch: refetchProviders,
+  } = useGetServiceProvidersQuery();
+  const providersData = allProviderData?.data || [];
+  // console.log("providersData", providersData);
+
+  const {
+    data: allServicesData,
+    isLoading: loadingServices,
+    isError: servicesError,
+  } = useGetAllServicesQuery();
+  const servicesData = allServicesData?.data || [];
+  // console.log("servicesData", servicesData);
+
+  const [updateProviderStatus, { isLoading: updatingStatus }] =
+    useChangeProviderStatusMutation();
+
+  // Initialize filteredProviders when providersData is loaded
+  useEffect(() => {
+    if (providersData && providersData.length > 0) {
+      setFilteredProviders(providersData);
+    }
+  }, [providersData]);
+
   const handleSearch = (e) => {
     const search = e.target.value;
     setSearchText(search);
-    const filtered = providers.filter(
+
+    if (!providersData || providersData.length === 0) {
+      setFilteredProviders([]);
+      return;
+    }
+
+    const filtered = providersData.filter(
       (provider) =>
-        provider.name.toLowerCase().includes(search.toLowerCase()) ||
-        provider.email.toLowerCase().includes(search.toLowerCase()) ||
-        provider.serviceCategory.toLowerCase().includes(search.toLowerCase())
+        provider.userId.name?.toLowerCase().includes(search.toLowerCase()) ||
+        provider.userId.email?.toLowerCase().includes(search.toLowerCase()) ||
+        provider.serviceCategory?.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredProviders(filtered);
     setPage(0);
@@ -166,31 +86,6 @@ export default function ProviderManagement() {
     setSelectedProvider(null);
   };
 
-  const handleStatusUpdate = (providerEmail, newStatus) => {
-    const updatedProviders = providers.map((provider) =>
-      provider.email === providerEmail
-        ? { ...provider, status: newStatus }
-        : provider
-    );
-    setProviders(updatedProviders);
-
-    const updatedFiltered = filteredProviders.map((provider) =>
-      provider.email === providerEmail
-        ? { ...provider, status: newStatus }
-        : provider
-    );
-    setFilteredProviders(updatedFiltered);
-
-    handleCloseModal();
-  };
-
-  // Pagination
-  // const totalItems = filteredProviders.length;
-  // const totalPages = Math.ceil(totalItems / itemsPerPage);
-  // const startIndex = (currentPage - 1) * itemsPerPage;
-  // const endIndex = startIndex + itemsPerPage;
-  // const currentItems = filteredProviders.slice(startIndex, endIndex);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -199,6 +94,24 @@ export default function ProviderManagement() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  if (loadingProvidersData || loadingServices) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (errorProvidersData || servicesError) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <p className="text-red-500 text-lg">
+          Something went wrong. Please try again.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -229,9 +142,6 @@ export default function ProviderManagement() {
             ),
             style: {
               borderRadius: "16px",
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#1976d2",
-              },
             },
           }}
         />
@@ -281,61 +191,90 @@ export default function ProviderManagement() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredProviders
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((provider, index) => (
-                <TableRow
-                  key={index}
-                  style={{
-                    "&:hover": { backgroundColor: "#f9f9f9" },
-                    "&:nth-of-type(odd)": { backgroundColor: "#fafafa" },
-                  }}
+            {filteredProviders.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  style={{ textAlign: "center", padding: "40px" }}
                 >
-                  <TableCell
+                  <p className="text-gray-500">No providers found</p>
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredProviders
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((provider, index) => (
+                  <TableRow
+                    key={provider.email || index}
                     style={{
-                      color: "#333",
-                      textAlign: "center",
-                      fontWeight: "600",
+                      backgroundColor: index % 2 === 0 ? "#fafafa" : "#ffffff",
                     }}
+                    hover
                   >
-                    {provider.name}
-                  </TableCell>
-                  <TableCell style={{ color: "#666", textAlign: "center" }}>
-                    {provider.email}
-                  </TableCell>
-                  <TableCell style={{ color: "#666", textAlign: "center" }}>
-                    {provider.location}
-                  </TableCell>
-                  <TableCell style={{ color: "#666", textAlign: "center" }}>
-                    {provider.serviceCategory}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    <span
-                      className="py-2 px-3 capitalize font-semibold text-white rounded-xl"
+                    <TableCell
                       style={{
-                        backgroundColor:
-                          provider.status.toLowerCase() === "accepted"
-                            ? "#1EC74F"
-                            : provider.status.toLowerCase() === "declined"
-                            ? "#EE5252"
-                            : provider.status.toLowerCase() === "pending"
-                            ? "#FFCC00"
-                            : "#9e9e9e",
+                        color: "#333",
+                        textAlign: "center",
+                        fontWeight: "600",
                       }}
                     >
-                      {provider.status}
-                    </span>
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    <IconButton
-                      onClick={() => handleViewDetails(provider)}
-                      size="small"
-                    >
-                      <FaEye />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      {provider.userId.name || "N/A"}
+                    </TableCell>
+                    <TableCell style={{ color: "#666", textAlign: "center" }}>
+                      {provider.userId.email || "N/A"}
+                    </TableCell>
+                    <TableCell style={{ color: "#666", textAlign: "center" }}>
+                      {/* {provider.location?.coordinates
+                        ? `${provider.location.coordinates[1]}, ${provider.location.coordinates[0]}`
+                        : provider.location?.type
+                        ? "Location Available"
+                        : typeof provider.location === "string"
+                        ? provider.location
+                        : "N/A"} */}
+                      {provider.serviceArea}
+                    </TableCell>
+                    <TableCell style={{ color: "#666", textAlign: "center" }}>
+                      {provider.serviceCategory &&
+                      servicesData.find(
+                        (service) => service._id === provider.serviceCategory
+                      )
+                        ? servicesData.find(
+                            (service) =>
+                              service._id === provider.serviceCategory
+                          ).serviceName
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      <span
+                        className="py-2 px-3 capitalize font-semibold text-white rounded-xl"
+                        style={{
+                          backgroundColor:
+                            provider.status?.toLowerCase() === "approved"
+                              ? "#1EC74F"
+                              : provider.status?.toLowerCase() === "rejected"
+                              ? "#EE5252"
+                              : provider.status?.toLowerCase() === "pending"
+                              ? "#FFCC00"
+                              : "#9e9e9e",
+                        }}
+                      >
+                        {provider.status
+                          ? provider.status.charAt(0).toUpperCase() +
+                            provider.status.slice(1).toLowerCase()
+                          : "N/A"}
+                      </span>
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      <IconButton
+                        onClick={() => handleViewDetails(provider)}
+                        size="small"
+                      >
+                        <FaEye />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -344,7 +283,7 @@ export default function ProviderManagement() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={providerData.length}
+        count={filteredProviders.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -356,7 +295,9 @@ export default function ProviderManagement() {
         selectedProvider={selectedProvider}
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}
-        handleStatusUpdate={handleStatusUpdate}
+        refetchProviders={refetchProviders}
+        updateProviderStatus={updateProviderStatus}
+        updatingStatus={updatingStatus}
       />
     </div>
   );

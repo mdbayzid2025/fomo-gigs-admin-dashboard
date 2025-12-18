@@ -15,7 +15,6 @@ import TermsAndConditions from "../Dashboard/Settings/TermsAndConditions";
 import AboutUs from "../Dashboard/Settings/AboutUs";
 import PrivacyPolicy from "../Dashboard/Settings/PrivacyPolicy";
 import ProviderManagement from "../Dashboard/ProviderManagement";
-import OrderManagement from "../Dashboard/OrderManagement";
 import EventManagement from "../Dashboard/EventManagement";
 import SocialManagement from "../Dashboard/SocialManagement";
 import Subscription from "../Dashboard/Subscription";
@@ -23,6 +22,7 @@ import UserManagement from "../Dashboard/UserManagement";
 import SupportEMail from "../Dashboard/SupportEMail";
 import ReportManagement from "../Dashboard/ReportManagement";
 import ProtectedRoute from "../../utils/ProtectedRoute";
+import CategoryManagement from "../Dashboard/CategoryManagement";
 
 const router = createBrowserRouter([
   {
@@ -70,8 +70,8 @@ const router = createBrowserRouter([
             element: <UserManagement />,
           },
           {
-            path: "order-management",
-            element: <OrderManagement />,
+            path: "category-management",
+            element: <CategoryManagement />,
           },
           {
             path: "event-management",

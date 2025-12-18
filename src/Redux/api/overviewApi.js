@@ -5,7 +5,7 @@ const overviewApi = baseApi.injectEndpoints({
     getStatsData: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        // console.log("gsd at", accessToken);
         return {
           url: "/analytics/stats",
           method: "get",
@@ -14,7 +14,7 @@ const overviewApi = baseApi.injectEndpoints({
           },
         };
       },
-      providesTags: ["user"],
+      providesTags: ["overview"],
     }),
     getUserGrowthData: builder.query({
       query: (year) => {
@@ -29,13 +29,13 @@ const overviewApi = baseApi.injectEndpoints({
           },
         };
       },
-      providesTags: ["user"],
+      providesTags: ["overview"],
     }),
     getEventsGrowthData: builder.query({
       query: (year) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gugd", accessToken);
-        console.log("selected year", year);
+        // console.log("gugd", accessToken);
+        // console.log("selected year", year);
         return {
           url: `/analytics/events/yearly-chart?year=${year}`,
           method: "get",
@@ -44,21 +44,7 @@ const overviewApi = baseApi.injectEndpoints({
           },
         };
       },
-      providesTags: ["user"],
-    }),
-    getRevenueGrowthData: builder.query({
-      query: () => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        console.log("grgd", accessToken);
-        return {
-          url: "/commission/chart",
-          method: "get",
-          headers: {
-            authorization: accessToken,
-          },
-        };
-      },
-      providesTags: ["user"],
+      providesTags: ["overview"],
     }),
   }),
 });
