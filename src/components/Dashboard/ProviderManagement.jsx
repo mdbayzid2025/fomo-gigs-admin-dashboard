@@ -16,7 +16,11 @@ import {
 
 import { FaEye, FaSearch } from "react-icons/fa";
 import ProviderDetailsModal from "../UI/Modals/ProviderDetailsModal";
-import { useGetServiceProvidersQuery } from "../../Redux/api/usersApi";
+import {
+  useChangeProviderStatusMutation,
+  useGetServiceProvidersQuery,
+} from "../../Redux/api/usersApi";
+import { useGetAllServicesQuery } from "../../Redux/api/serviceApi";
 
 export default function ProviderManagement() {
   const [searchText, setSearchText] = useState("");
@@ -28,11 +32,23 @@ export default function ProviderManagement() {
 
   const {
     data: allProviderData,
-    isLoading,
-    isError,
+    isLoading: loadingProvidersData,
+    isError: errorProvidersData,
+    refetch: refetchProviders,
   } = useGetServiceProvidersQuery();
   const providersData = allProviderData?.data || [];
   console.log("providersData", providersData);
+
+  const {
+    data: allServicesData,
+    isLoading: loadingServices,
+    isError: servicesError,
+  } = useGetAllServicesQuery();
+  const servicesData = allServicesData?.data || [];
+  console.log("servicesData", servicesData);
+
+  const [updateProviderStatus, { isLoading: updatingStatus }] =
+    useChangeProviderStatusMutation();
 
   // Initialize filteredProviders when providersData is loaded
   useEffect(() => {
@@ -70,18 +86,6 @@ export default function ProviderManagement() {
     setSelectedProvider(null);
   };
 
-  const handleStatusUpdate = (providerEmail, newStatus) => {
-    // Update the filtered providers list
-    const updatedFiltered = filteredProviders.map((provider) =>
-      provider.email === providerEmail
-        ? { ...provider, status: newStatus }
-        : provider
-    );
-    setFilteredProviders(updatedFiltered);
-
-    handleCloseModal();
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -91,7 +95,7 @@ export default function ProviderManagement() {
     setPage(0);
   };
 
-  if (isLoading) {
+  if (loadingProvidersData || loadingServices) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
         <CircularProgress />
@@ -99,7 +103,7 @@ export default function ProviderManagement() {
     );
   }
 
-  if (isError) {
+  if (errorProvidersData || servicesError) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
         <p className="text-red-500 text-lg">
@@ -214,22 +218,31 @@ export default function ProviderManagement() {
                         fontWeight: "600",
                       }}
                     >
-                      {provider.name || "N/A"}
+                      {provider.userId.name || "N/A"}
                     </TableCell>
                     <TableCell style={{ color: "#666", textAlign: "center" }}>
-                      {provider.email || "N/A"}
+                      {provider.userId.email || "N/A"}
                     </TableCell>
                     <TableCell style={{ color: "#666", textAlign: "center" }}>
-                      {provider.location?.coordinates
+                      {/* {provider.location?.coordinates
                         ? `${provider.location.coordinates[1]}, ${provider.location.coordinates[0]}`
                         : provider.location?.type
                         ? "Location Available"
                         : typeof provider.location === "string"
                         ? provider.location
-                        : "N/A"}
+                        : "N/A"} */}
+                      {provider.serviceArea}
                     </TableCell>
                     <TableCell style={{ color: "#666", textAlign: "center" }}>
-                      {provider.serviceCategory || "N/A"}
+                      {provider.serviceCategory &&
+                      servicesData.find(
+                        (service) => service._id === provider.serviceCategory
+                      )
+                        ? servicesData.find(
+                            (service) =>
+                              service._id === provider.serviceCategory
+                          ).serviceName
+                        : "N/A"}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
                       <span
@@ -238,14 +251,17 @@ export default function ProviderManagement() {
                           backgroundColor:
                             provider.status?.toLowerCase() === "approved"
                               ? "#1EC74F"
-                              : provider.status?.toLowerCase() === "declined"
+                              : provider.status?.toLowerCase() === "rejected"
                               ? "#EE5252"
                               : provider.status?.toLowerCase() === "pending"
                               ? "#FFCC00"
                               : "#9e9e9e",
                         }}
                       >
-                        {provider.status || "Unknown"}
+                        {provider.status
+                          ? provider.status.charAt(0).toUpperCase() +
+                            provider.status.slice(1).toLowerCase()
+                          : "N/A"}
                       </span>
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
@@ -279,7 +295,9 @@ export default function ProviderManagement() {
         selectedProvider={selectedProvider}
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}
-        handleStatusUpdate={handleStatusUpdate}
+        refetchProviders={refetchProviders}
+        updateProviderStatus={updateProviderStatus}
+        updatingStatus={updatingStatus}
       />
     </div>
   );

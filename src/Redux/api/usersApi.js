@@ -16,42 +16,24 @@ const overviewApi = baseApi.injectEndpoints({
       },
       providesTags: ["user"],
     }),
-    getUserGrowthData: builder.query({
-      query: (year) => {
+    changeProviderStatus: builder.mutation({
+      query: ({ providerId, status }) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        // console.log("gugd", accessToken);
-        // console.log("selected year", year);
+        // console.log("gsd at", accessToken);
+        console.log(providerId);
         return {
-          url: `/analytics/yearly-chart?year=${year}`,
-          method: "get",
+          url: `/analytics/service-provider/${providerId}/status`,
+          method: "patch",
+          body: { status },
           headers: {
             authorization: `Bearer ${accessToken}`,
           },
         };
       },
-      providesTags: ["user"],
-    }),
-    getEventsGrowthData: builder.query({
-      query: (year) => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gugd", accessToken);
-        console.log("selected year", year);
-        return {
-          url: `/analytics/events/yearly-chart?year=${year}`,
-          method: "get",
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-        };
-      },
-      providesTags: ["user"],
+      invalidatesTags: ["user"],
     }),
   }),
 });
 
-export const {
-  useGetServiceProvidersQuery,
-  useGetUserGrowthDataQuery,
-  useGetEventsGrowthDataQuery,
-  useGetRevenueGrowthDataQuery,
-} = overviewApi;
+export const { useGetServiceProvidersQuery, useChangeProviderStatusMutation } =
+  overviewApi;
