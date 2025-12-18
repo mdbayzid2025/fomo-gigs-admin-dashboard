@@ -1,165 +1,270 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   IconButton,
-  InputAdornment,
-  OutlinedInput,
   TextField,
+  MenuItem,
 } from "@mui/material";
 import { FiEdit } from "react-icons/fi";
-import { IoMdEye } from "react-icons/io";
 import { MdArrowBackIosNew } from "react-icons/md";
 
-import { IoIosEyeOff } from "react-icons/io";
-
 import profileImg from "../../../../public/Images/profile.png";
+import {
+  useEditProfileMutation,
+  useGetProfileQuery,
+} from "../../../Redux/api/usersApi";
+import { getImageUrl } from "../../../utils/baseUrl";
+import { toast } from "sonner";
 
 export default function Profile() {
-  const [name, setName] = useState("Charlene Reed");
-  const [email, setEmail] = useState("charlenereed@gmail.com");
-  const [userName, setUserName] = useState("Charlene Reed");
-  const [password, setPassword] = useState("**********");
+  const imageUrl = getImageUrl();
+
+  /* ===================== STATE ===================== */
+  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [bio, setBio] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("BD");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+
   const [profileImage, setProfileImage] = useState(profileImg);
-  const [showPassword, setShowPassword] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  /* ===================== API ===================== */
+  const {
+    data: profileInfo,
+    isLoading: loadingProfile,
+    isError: profileError,
+    refetch,
+  } = useGetProfileQuery();
 
+  const profileData = profileInfo?.data;
+
+  const [updateProfile, { isLoading: updatingProfile }] =
+    useEditProfileMutation();
+
+  /* ===================== POPULATE DATA ===================== */
+  useEffect(() => {
+    if (!profileData) return;
+
+    setName(profileData.name || "");
+    setUserName(profileData.userName || "");
+    setEmail(profileData.email || "");
+    setBio(profileData.bio || "");
+    setPhone(profileData.phone || "");
+    setCountryCode(profileData.countryCode || "BD");
+    setDateOfBirth(profileData.dateOfBirth || "");
+    setGender(profileData.gender || "");
+
+    if (profileData.profileImage) {
+      setProfileImage(imageUrl + profileData.profileImage);
+    }
+  }, [profileData, imageUrl]);
+
+  /* ===================== IMAGE HANDLER ===================== */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
+    if (!file) return;
+
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setProfileImage(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  /* ===================== SUBMIT ===================== */
+  const handleSubmit = async () => {
+    if (!name.trim()) return toast.warning("Name is required");
+    if (!userName.trim()) return toast.warning("Username is required");
+
+    try {
+      const formData = new FormData();
+
+      const payload = {
+        name: name.trim(),
+        userName: userName.trim(),
+        gender,
+        dateOfBirth,
+        bio,
       };
-      reader.readAsDataURL(file);
+
+      formData.append("data", JSON.stringify(payload));
+
+      if (imageFile) {
+        formData.append("profileImage", imageFile);
+      }
+
+      const res = await updateProfile(formData).unwrap();
+      console.log("update response", res);
+      if (res.success) {
+        toast.success("Profile updated successfully");
+        refetch();
+        setImageFile(null);
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to update profile");
     }
   };
 
-  const handleSubmit = () => {
-    console.log({
-      name,
-      email,
-      userName,
-      password,
-    });
-  };
+  /* ===================== UI STATES ===================== */
+  if (loadingProfile) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
 
+  if (profileError) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <p className="text-red-500">Something went wrong</p>
+      </div>
+    );
+  }
+
+  /* ===================== RENDER ===================== */
   return (
-    <div className="flex flex-col items-start gap-10 w-full bg-[#fff] h-screen p-20">
+    <div className="flex flex-col gap-10 w-full bg-white h-screen p-20">
       <Button
         onClick={() => window.history.back()}
         sx={{
           backgroundColor: "#131927",
           color: "white",
-          padding: "10px",
-          width: "15px",
-          ":hover": {
-            backgroundColor: "#0095FF",
-          },
+          width: 40,
+          ":hover": { backgroundColor: "#0095FF" },
         }}
       >
         <MdArrowBackIosNew />
       </Button>
-      {/* Profile Header */}
-      <div className="flex items-center w-full gap-20">
-        <div className="relative">
-          <div className="bg-[#efefef]">
-            <img src={profileImage} alt="" className="size-48" />
-          </div>
+
+      <div className="flex gap-20">
+        {/* ===== PROFILE IMAGE ===== */}
+        <div className="relative h-44">
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="size-48 object-cover bg-gray-100"
+          />
+
           <IconButton
+            component="label"
             sx={{
               position: "absolute",
-              top: "80%",
+              bottom: 0,
               right: 0,
               backgroundColor: "#fff",
-              borderRadius: "50%",
-              padding: "8px",
             }}
-            component="label"
           >
             <input
+              hidden
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              style={{ display: "none" }}
             />
-            <FiEdit fontSize={25} className="text-[#0095FF]" />
+            <FiEdit className="text-[#0095FF]" />
           </IconButton>
         </div>
 
-        <div className="flex flex-col gap-8 w-2/3">
-          <div className="flex items-center gap-5">
-            <div className="w-full">
-              <TextField
-                label="Your Name"
-                fullWidth
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="w-full">
-              <TextField
-                label="User Name"
-                fullWidth
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-5">
-            <div className="w-full">
-              <TextField
-                label="Email"
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="disabled"
-              />
-            </div>
-            <div className="w-full">
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={
-                        showPassword
-                          ? "hide the password"
-                          : "display the password"
-                      }
-                      onClick={handleClickShowPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <IoIosEyeOff /> : <IoMdEye />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                fullWidth
-              />
-            </div>
-          </div>
-
-          <Box mt={2}>
-            <Button
+        {/* ===== FORM ===== */}
+        <div className="flex flex-col gap-6 w-2/3">
+          <div className="flex gap-4">
+            <TextField
+              label="Name"
               fullWidth
+              value={name}
+              size="small"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              label="Username"
+              fullWidth
+              value={userName}
+              size="small"
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
+
+          <TextField
+            label="Email"
+            value={email}
+            size="small"
+            disabled
+            fullWidth
+          />
+
+          <TextField
+            label="Bio"
+            multiline
+            rows={2}
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+
+          <div className="flex gap-4">
+            <TextField
+              label="Country Code"
+              value={countryCode}
+              size="small"
+              onChange={(e) => setCountryCode(e.target.value)}
+              sx={{ width: "30%" }}
+            />
+            <TextField
+              label="Phone"
+              fullWidth
+              value={phone}
+              size="small"
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+
+          <div className="flex gap-4">
+            <TextField
+              type="date"
+              label="Date of Birth"
+              size="small"
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+            />
+
+            <TextField
+              select
+              label="Gender"
+              fullWidth
+              value={gender}
+              size="small"
+              onChange={(e) => setGender(e.target.value)}
+            >
+              <MenuItem value="MALE">Male</MenuItem>
+              <MenuItem value="FEMALE">Female</MenuItem>
+              <MenuItem value="OTHER">Other</MenuItem>
+            </TextField>
+          </div>
+
+          <Box>
+            <Button
               variant="contained"
+              onClick={handleSubmit}
+              disabled={updatingProfile}
               sx={{
                 backgroundColor: "#0095FF",
-                color: "white",
-                textTransform: "none",
-                padding: "10px",
                 width: "40%",
+                textTransform: "none",
                 float: "right",
               }}
-              onClick={handleSubmit}
             >
-              Save & Update
+              {updatingProfile ? (
+                <CircularProgress size={22} color="inherit" />
+              ) : (
+                "Save & Update"
+              )}
             </Button>
           </Box>
         </div>

@@ -46,6 +46,36 @@ const overviewApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["user"],
     }),
+    getProfile: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("gsd at", accessToken);
+        return {
+          url: "/users/profile",
+          method: "get",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["user"],
+    }),
+    editProfile: builder.mutation({
+      query: (formData) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("gsd at", accessToken);
+        console.log("update data", formData);
+        return {
+          url: "/users",
+          method: "patch",
+          body: formData,
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
   }),
 });
 
@@ -53,4 +83,6 @@ export const {
   useGetAllUsersQuery,
   useGetServiceProvidersQuery,
   useChangeProviderStatusMutation,
+  useGetProfileQuery,
+  useEditProfileMutation,
 } = overviewApi;
