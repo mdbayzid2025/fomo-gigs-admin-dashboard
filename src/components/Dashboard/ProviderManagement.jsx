@@ -37,7 +37,7 @@ export default function ProviderManagement() {
     refetch: refetchProviders,
   } = useGetServiceProvidersQuery();
   const providersData = allProviderData?.data || [];
-  console.log("providersData", providersData);
+  // console.log("providersData", providersData);
 
   const {
     data: allServicesData,
@@ -45,7 +45,7 @@ export default function ProviderManagement() {
     isError: servicesError,
   } = useGetAllServicesQuery();
   const servicesData = allServicesData?.data || [];
-  console.log("servicesData", servicesData);
+  // console.log("servicesData", servicesData);
 
   const [updateProviderStatus, { isLoading: updatingStatus }] =
     useChangeProviderStatusMutation();

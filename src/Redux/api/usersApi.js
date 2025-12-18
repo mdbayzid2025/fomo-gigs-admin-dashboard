@@ -2,6 +2,20 @@ import { baseApi } from "../baseApi";
 
 const overviewApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getAllUsers: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("gsd at", accessToken);
+        return {
+          url: "/users",
+          method: "get",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["user"],
+    }),
     getServiceProviders: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
@@ -35,5 +49,8 @@ const overviewApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetServiceProvidersQuery, useChangeProviderStatusMutation } =
-  overviewApi;
+export const {
+  useGetAllUsersQuery,
+  useGetServiceProvidersQuery,
+  useChangeProviderStatusMutation,
+} = overviewApi;

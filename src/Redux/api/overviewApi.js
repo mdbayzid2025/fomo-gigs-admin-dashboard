@@ -5,7 +5,7 @@ const overviewApi = baseApi.injectEndpoints({
     getStatsData: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        // console.log("gsd at", accessToken);
         return {
           url: "/analytics/stats",
           method: "get",
@@ -34,8 +34,8 @@ const overviewApi = baseApi.injectEndpoints({
     getEventsGrowthData: builder.query({
       query: (year) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gugd", accessToken);
-        console.log("selected year", year);
+        // console.log("gugd", accessToken);
+        // console.log("selected year", year);
         return {
           url: `/analytics/events/yearly-chart?year=${year}`,
           method: "get",
