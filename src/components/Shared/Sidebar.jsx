@@ -54,25 +54,25 @@ export default function Sidebar() {
             label: "User Management",
           },
           {
-            to: "/order-management",
+            to: "/category-management",
             icon: <LuNotepadText className=" lg:text-2xl" />,
-            label: "Order Management",
+            label: "Service Category",
           },
           {
             to: "/event-management",
             icon: <FaRegCalendar className=" lg:text-2xl" />,
             label: "Event Management",
           },
-          {
-            to: "/social-management",
-            icon: <HiOutlinePresentationChartLine className=" lg:text-2xl" />,
-            label: "Social Management",
-          },
-          {
-            to: "/subscription",
-            icon: <IoDiamondOutline className=" lg:text-2xl" />,
-            label: "Subscription",
-          },
+          // {
+          //   to: "/social-management",
+          //   icon: <HiOutlinePresentationChartLine className=" lg:text-2xl" />,
+          //   label: "Social Management",
+          // },
+          // {
+          //   to: "/subscription",
+          //   icon: <IoDiamondOutline className=" lg:text-2xl" />,
+          //   label: "Subscription",
+          // },
           {
             to: "/support",
             icon: <LuBookText className=" lg:text-2xl" />,
