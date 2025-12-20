@@ -72,10 +72,10 @@ export default function EventManagement() {
   // Status class for styling
   const statusClass = (s) => {
     const key = s?.toUpperCase();
-    if (key === "UPCOMING") return "bg-blue-500 text-white";
-    if (key === "ONGOING") return "bg-green-500 text-white";
-    if (key === "COMPLETED") return "bg-gray-500 text-white";
-    if (key === "CANCELLED") return "bg-red-500 text-white";
+    if (key === "UPCOMING") return "bg-blue-600 text-white";
+    if (key === "ONGOING") return "bg-green-600 text-white";
+    if (key === "ENDED") return "bg-gray-600 text-white";
+    if (key === "CANCELLED") return "bg-red-600 text-white";
     return "bg-gray-400 text-white";
   };
 
@@ -185,11 +185,12 @@ export default function EventManagement() {
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     <span
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold ${statusClass(
+                      className={`px-3 py-2 rounded-lg text-xs font-semibold ${statusClass(
                         event.status
                       )}`}
                     >
-                      {event.status}
+                      {event.status?.charAt(0).toUpperCase() +
+                        event.status?.slice(1).toLowerCase()}
                     </span>
                   </TableCell>
                   <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
