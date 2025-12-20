@@ -17,7 +17,7 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
 // import { toast } from "sonner";
-import { useGetSupportDataQuery } from "../../Redux/api/supportApi";
+import { useGetSupportDataQuery } from "../../Redux/api/interactApi";
 import dayjs from "dayjs";
 
 export default function SupportEmail() {
