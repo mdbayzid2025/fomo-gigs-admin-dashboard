@@ -55,23 +55,23 @@ const settingsApi = baseApi.injectEndpoints({
           url: "/rules/terms-and-conditions",
           method: "get",
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
       providesTags: ["settings"],
     }),
-    updateTermsAndConditions: builder.mutation({
-      query: ({ text }) => {
+    addTermsAndConditions: builder.mutation({
+      query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log(accessToken);
-        console.log("TermsAndConditions", text);
+        console.log("TermsAndConditions", payload);
         return {
           url: "/rules/terms-and-conditions",
           method: "post",
-          body: { text },
+          body: payload,
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -85,7 +85,7 @@ const settingsApi = baseApi.injectEndpoints({
           url: "/rules/privacy-policy",
           method: "get",
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -101,7 +101,7 @@ const settingsApi = baseApi.injectEndpoints({
           method: "post",
           body: { text },
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -115,7 +115,7 @@ export const {
   useGetAboutUsQuery,
   useAddAboutUsMutation,
   useGetTermsAndConditionsQuery,
-  useUpdateTermsAndConditionsMutation,
+  useAddTermsAndConditionsMutation,
   useGetPrivacyPolicyQuery,
   useUpdatePrivacyPolicyMutation,
 } = settingsApi;
