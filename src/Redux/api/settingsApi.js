@@ -91,15 +91,15 @@ const settingsApi = baseApi.injectEndpoints({
       },
       providesTags: ["settings"],
     }),
-    updatePrivacyPolicy: builder.mutation({
-      query: ({ text }) => {
+    addPrivacyPolicy: builder.mutation({
+      query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log(accessToken);
-        console.log("PrivacyPolicy", text);
+        console.log("PrivacyPolicy", payload);
         return {
           url: "/rules/privacy-policy",
           method: "post",
-          body: { text },
+          body: payload,
           headers: {
             authorization: `Bearer ${accessToken}`,
           },
@@ -117,5 +117,5 @@ export const {
   useGetTermsAndConditionsQuery,
   useAddTermsAndConditionsMutation,
   useGetPrivacyPolicyQuery,
-  useUpdatePrivacyPolicyMutation,
+  useAddPrivacyPolicyMutation,
 } = settingsApi;
