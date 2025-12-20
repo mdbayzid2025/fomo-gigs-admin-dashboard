@@ -25,23 +25,23 @@ const settingsApi = baseApi.injectEndpoints({
           url: "/rules/about",
           method: "get",
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
       providesTags: ["settings"],
     }),
     addAboutUs: builder.mutation({
-      query: ({ text }) => {
+      query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log(accessToken);
-        console.log("aboutUs", text);
+        console.log("aboutUs", payload);
         return {
           url: "/rules/about",
           method: "post",
-          body: { text },
+          body: payload,
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },

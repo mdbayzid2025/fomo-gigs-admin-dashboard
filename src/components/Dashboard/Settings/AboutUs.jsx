@@ -32,8 +32,14 @@ const AboutUs = () => {
 
   const handleOnSave = async () => {
     try {
+      const payload = {
+        content: content,
+        type: "about",
+      };
+
       // Add a new Terms and Conditions if not existing
-      const response = await addSettings({ termsOfService: content }).unwrap();
+      const response = await addSettings(payload).unwrap();
+      console.log("add about us", response);
       if (response.success) {
         toast.success("About Us added successfully!");
       }
