@@ -15,25 +15,31 @@ const AboutUs = () => {
   const [content, setContent] = useState("");
 
   const {
-    data: getSettingsData,
+    data: getAboutUsData,
     isLoading: isFetching,
     error: fetchError,
     refetch,
   } = useGetAboutUsQuery();
-  console.log(getSettingsData?.data.content);
+  console.log(getAboutUsData?.data.content);
 
-  const [addSettings, { isLoading: isAdding }] = useAddAboutUsMutation();
+  const [addAboutUs, { isLoading: isAdding }] = useAddAboutUsMutation();
 
   useEffect(() => {
-    if (getSettingsData?.data.content) {
-      setContent(getSettingsData.data.content);
+    if (getAboutUsData?.data.content) {
+      setContent(getAboutUsData.data.content);
     }
-  }, [getSettingsData]);
+  }, [getAboutUsData]);
 
   const handleOnSave = async () => {
     try {
-      // Add a new Terms and Conditions if not existing
-      const response = await addSettings({ termsOfService: content }).unwrap();
+      const payload = {
+        content: content,
+        type: "about",
+      };
+
+      // Add a new about us if not existing
+      const response = await addAboutUs(payload).unwrap();
+      console.log("add about us", response);
       if (response.success) {
         toast.success("About Us added successfully!");
       }
@@ -47,7 +53,7 @@ const AboutUs = () => {
   if (isFetching || isAdding) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <CircularProgress size="large" tip="Loading Terms and Conditions..." />
+        <CircularProgress size="large" tip="Loading About Us..." />
       </div>
     );
   }
@@ -55,7 +61,7 @@ const AboutUs = () => {
   if (fetchError) {
     return (
       <div className="text-white">
-        Error loading Terms and Conditions. Please try again later.
+        Error loading About Us. Please try again later.
       </div>
     );
   }

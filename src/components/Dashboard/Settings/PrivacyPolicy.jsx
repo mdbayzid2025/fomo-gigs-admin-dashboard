@@ -1,69 +1,70 @@
 import JoditEditor from "jodit-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-// import { toast } from "sonner";
-// import {
-//   useGetSettingsQuery,
-//   useUpdateSettingsMutation,
-// } from "../../../Redux/api/settingsApi";
-import { Button } from "@mui/material";
+import { toast } from "sonner";
+
+import { Button, CircularProgress } from "@mui/material";
 import { MdArrowBackIosNew } from "react-icons/md";
+import {
+  useAddPrivacyPolicyMutation,
+  useGetPrivacyPolicyQuery,
+} from "../../../Redux/api/settingsApi";
 
 const PrivacyPolicy = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
 
-  // const {
-  //   data: getSettingsData,
-  //   isLoading: isFetching,
-  //   error: fetchError,
-  //   refetch,
-  // } = useGetSettingsQuery();
-  // console.log(getSettingsData?.data?.termsOfService);
+  const {
+    data: getPrivacyPolicy,
+    isLoading: isFetching,
+    error: fetchError,
+    refetch,
+  } = useGetPrivacyPolicyQuery();
 
-  // const [addSettings, { isLoading: isAdding }] = useAddSettingsMutation();
-  // const [updateSettings, { isLoading: isUpdating }] =
-  //   useUpdateSettingsMutation();
+  console.log(getPrivacyPolicy?.data.content);
 
-  // useEffect(() => {
-  //   if (getSettingsData?.data.termsOfService) {
-  //     setContent(getSettingsData.data.termsOfService);
-  //   }
-  // }, [getSettingsData]);
+  const [addPrivacyPolicy, { isLoading: isAdding }] =
+    useAddPrivacyPolicyMutation();
+
+  useEffect(() => {
+    setContent(getPrivacyPolicy?.data?.content || "");
+  }, [getPrivacyPolicy]);
 
   const handleOnSave = async () => {
-    // try {
-    //   await updateSettings({ termsOfService: content }).unwrap();
-    //   toast.success("Terms and Conditions updated successfully!");
-    // if
-    // (getSettingsData?.data.termsOfService) { }
-    //  else {
-    //   // Add a new Terms and Conditions if not existing
-    //   await addSettings({ termsOfService: content }).unwrap();
-    //   toast.success("Terms and Conditions added successfully!");
-    // }
-    // refetch();
-    // } catch (error) {
-    //   toast.error("Failed to save Terms and Conditions. Please try again.");
-    //   console.error("Save error:", error);
-    // }
+    try {
+      const payload = {
+        content: content,
+        type: "privacy",
+      };
+
+      // Add a new privacy policy if not existing
+      const response = await addPrivacyPolicy(payload).unwrap();
+      console.log("add privacy policy", response);
+      if (response.success) {
+        toast.success("Privacy Policy added successfully!");
+      }
+      refetch();
+    } catch (error) {
+      toast.error("Failed to save Privacy Policy. Please try again.");
+      console.error("Save error:", error);
+    }
   };
 
-  // if (isFetching || isUpdating) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       <Spin size="large" tip="Loading Terms and Conditions..." />
-  //     </div>
-  //   );
-  // }
+  if (isFetching || isAdding) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <CircularProgress size="large" tip="Loading Privacy Policy..." />
+      </div>
+    );
+  }
 
-  // if (fetchError) {
-  //   return (
-  //     <div className="text-white">
-  //       Error loading Terms and Conditions. Please try again later.
-  //     </div>
-  //   );
-  // }
+  if (fetchError) {
+    return (
+      <div className="text-white">
+        Error loading Privacy Policy. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[90vh] bg-[#fbfbfb] rounded-lg py-10 px-4">
@@ -80,7 +81,7 @@ const PrivacyPolicy = () => {
         }}
       >
         <MdArrowBackIosNew />
-      </Button>
+      </Button>{" "}
       <div className="p-2 rounded">
         <div className="flex items-center justify-between py-4">
           <h1 className="text-4xl font-bold  text-[#222021]">Privacy Policy</h1>
@@ -102,6 +103,13 @@ const PrivacyPolicy = () => {
             Save & Change
           </Button>
         </div>
+
+        {!getPrivacyPolicy?.data && (
+          <p className="text-gray-500 mt-2">
+            No Privacy Policy found. Create one below.
+          </p>
+        )}
+
         <div className="my-5">
           <JoditEditor
             ref={editor}

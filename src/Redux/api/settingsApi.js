@@ -25,23 +25,23 @@ const settingsApi = baseApi.injectEndpoints({
           url: "/rules/about",
           method: "get",
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
       providesTags: ["settings"],
     }),
     addAboutUs: builder.mutation({
-      query: ({ text }) => {
+      query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log(accessToken);
-        console.log("aboutUs", text);
+        console.log("aboutUs", payload);
         return {
           url: "/rules/about",
           method: "post",
-          body: { text },
+          body: payload,
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -55,23 +55,23 @@ const settingsApi = baseApi.injectEndpoints({
           url: "/rules/terms-and-conditions",
           method: "get",
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
       providesTags: ["settings"],
     }),
-    updateTermsAndConditions: builder.mutation({
-      query: ({ text }) => {
+    addTermsAndConditions: builder.mutation({
+      query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log(accessToken);
-        console.log("TermsAndConditions", text);
+        console.log("TermsAndConditions", payload);
         return {
           url: "/rules/terms-and-conditions",
           method: "post",
-          body: { text },
+          body: payload,
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -85,23 +85,23 @@ const settingsApi = baseApi.injectEndpoints({
           url: "/rules/privacy-policy",
           method: "get",
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
       providesTags: ["settings"],
     }),
-    updatePrivacyPolicy: builder.mutation({
-      query: ({ text }) => {
+    addPrivacyPolicy: builder.mutation({
+      query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
         console.log(accessToken);
-        console.log("PrivacyPolicy", text);
+        console.log("PrivacyPolicy", payload);
         return {
           url: "/rules/privacy-policy",
           method: "post",
-          body: { text },
+          body: payload,
           headers: {
-            Authorization: accessToken,
+            authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -115,7 +115,7 @@ export const {
   useGetAboutUsQuery,
   useAddAboutUsMutation,
   useGetTermsAndConditionsQuery,
-  useUpdateTermsAndConditionsMutation,
+  useAddTermsAndConditionsMutation,
   useGetPrivacyPolicyQuery,
-  useUpdatePrivacyPolicyMutation,
+  useAddPrivacyPolicyMutation,
 } = settingsApi;

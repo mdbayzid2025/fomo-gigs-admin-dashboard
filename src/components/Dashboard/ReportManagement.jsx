@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -14,71 +14,41 @@ import {
   InputAdornment,
   Button,
   Snackbar,
+  CircularProgress,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
-
-const reportedPosts = [
-  {
-    postId: "POST123456",
-    userName: "john_doe",
-    userProfile: "https://www.example.com/images/john_doe.jpg",
-    userEmail: "john_doe@example.com",
-    followers: 3400,
-    content: "https://via.placeholder.com/800x400",
-    contentType: "Image",
-    reportReason: "Inappropriate Content",
-    status: "Pending",
-    timestamp: "2025-09-15T14:00:00",
-    likes: 124,
-    comments: 45,
-    shares: 12,
-    location: "New York, USA",
-    device: "iPhone 12",
-    platform: "Instagram",
-  },
-  {
-    postId: "POST123457",
-    userName: "jane_smith",
-    userProfile: "https://www.example.com/images/jane_smith.jpg",
-    userEmail: "jane_smith@example.com",
-    followers: 1800,
-    content: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // YouTube video link
-    contentType: "Reel",
-    reportReason: "Violence",
-    status: "Reviewed",
-    timestamp: "2025-09-14T10:00:00",
-    likes: 231,
-    comments: 67,
-    shares: 23,
-    location: "San Francisco, USA",
-    device: "Samsung Galaxy",
-    platform: "TikTok",
-  },
-  // Additional reported posts...
-];
+import {
+  useChangeReportStatusMutation,
+  useGetReportsDataQuery,
+} from "../../Redux/api/interactApi";
+import dayjs from "dayjs";
+import { toast } from "sonner";
 
 export default function ReportManagement() {
-  const [searchText, setSearchText] = useState("");
-  const [filteredPosts, setFilteredPosts] = useState(reportedPosts);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [openSnackbar, setOpenSnackbar] = useState(false); // For action confirmation
-  const [actionMessage, setActionMessage] = useState(""); // Action message for the snackbar
 
-  const handleSearchChange = (e) => {
-    const search = e.target.value;
-    setSearchText(search);
-    const filtered = reportedPosts.filter(
-      (post) =>
-        post.postId.toLowerCase().includes(search.toLowerCase()) ||
-        post.userName.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredPosts(filtered);
-    setPage(0);
-  };
+  const {
+    data: reportsData,
+    isLoading: reportsLoading,
+    isError: reportsError,
+    refetch,
+  } = useGetReportsDataQuery();
+  const reports = reportsData?.data.data || [];
+  console.log(reports);
+
+  const [changeReportStatus, { isLoading: isStatusChanging }] =
+    useChangeReportStatusMutation();
+
+  useEffect(() => {
+    if (reports.length) {
+      setFilteredPosts(reports);
+    }
+  }, [reports]);
 
   const handleChangePage = (_event, newPage) => setPage(newPage);
 
@@ -97,60 +67,53 @@ export default function ReportManagement() {
     setSelectedPost(null);
   };
 
-  const handleManagePost = (postId, newStatus) => {
-    // Update the post status (mark as Reviewed, Resolved, etc.)
-    const updatedPosts = filteredPosts.map((post) =>
-      post.postId === postId ? { ...post, status: newStatus } : post
-    );
-    setFilteredPosts(updatedPosts);
-    setActionMessage(`Post marked as ${newStatus}`);
-    setOpenSnackbar(true);
-    handleCloseModal();
-  };
+  const handleManagePost = async (postId, newStatus) => {
+    try {
+      // Call the mutation with the report ID and new status
+      const result = await changeReportStatus({
+        providerId: postId,
+        status: newStatus,
+      }).unwrap();
+      console.log(result);
 
-  // Format timestamp helper
-  const formatTimestamp = (iso) =>
-    new Date(iso).toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
+      if (result.success) {
+        refetch();
+        toast.success("Report Status Updated Successfully.");
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.error("Error updating report status:", error);
+      toast.error("Failed to update report status.");
+    }
+  };
 
   // Status pill style helper
   const statusClass = (status) => {
-    return status === "Reviewed"
+    return status === "REVIEWED"
       ? "bg-green-500 text-white"
-      : status === "Pending"
+      : status === "PENDING"
       ? "bg-yellow-500 text-black"
       : "bg-gray-400 text-white";
   };
 
+  if (reportsLoading || isStatusChanging) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (reportsError) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <p className="text-red-500">Something went wrong</p>
+      </div>
+    );
+  }
+
   return (
     <div className="px-10 py-8 bg-[#fbfbfb] min-h-[92vh]">
-      {/* Search */}
-      <div className="flex items-center justify-end mb-4">
-        <TextField
-          sx={{
-            width: 300,
-            "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "#131927" },
-            },
-            "& .MuiOutlinedInput-notchedOutline": { borderRadius: "20px" },
-            height: "40px",
-            "& .MuiInputBase-root": { height: "100%" },
-          }}
-          placeholder="Search by Post ID or Username"
-          value={searchText}
-          onChange={handleSearchChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FaSearch />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
-
       {/* Table for Reported Posts */}
       <TableContainer
         style={{
@@ -163,8 +126,8 @@ export default function ReportManagement() {
             <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
               {[
                 "Post ID",
-                "User",
-                "Content Type",
+
+                "Target Type",
                 "Reported Reason",
                 "Status",
                 "Action",
@@ -186,18 +149,14 @@ export default function ReportManagement() {
             {filteredPosts
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((post) => (
-                <TableRow key={post.postId}>
+                <TableRow key={post._id}>
+                  <TableCell sx={{ textAlign: "center" }}>{post._id}</TableCell>
+
                   <TableCell sx={{ textAlign: "center" }}>
-                    {post.postId}
+                    {post.targetType}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {post.userName}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {post.contentType}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {post.reportReason}
+                    {post.reason}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     <span
@@ -256,116 +215,50 @@ export default function ReportManagement() {
         >
           {selectedPost && (
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <img
-                  src={selectedPost.userProfile}
-                  alt="User Profile"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
-                />
-                <div>
-                  <h3 className="text-2xl font-semibold">
-                    {selectedPost.userName}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {selectedPost.userEmail}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {selectedPost.followers} followers
-                  </p>
-                </div>
-              </div>
-
               <div className="space-y-2">
                 <h4 className="text-xl font-semibold">Post Details</h4>
                 <div className="flex items-center">
                   <span className="font-semibold w-40">Post ID:</span>
-                  <span>{selectedPost.postId}</span>
+                  <span>{selectedPost._id}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="font-semibold w-40">Reported Reason:</span>
-                  <span>{selectedPost.reportReason}</span>
+                  <span>{selectedPost.reason}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="font-semibold w-40">Timestamp:</span>
-                  <span>{formatTimestamp(selectedPost.timestamp)}</span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold">Post Content</h4>
-                {selectedPost.contentType === "Image" ? (
-                  <img
-                    src={selectedPost.content}
-                    alt="Reported Content"
-                    className="w-full rounded-lg"
-                  />
-                ) : (
-                  <video controls className="w-full rounded-lg">
-                    <source src={selectedPost.content} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold">Engagement</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <p className="text-lg font-semibold">
-                      {selectedPost.likes}
-                    </p>
-                    <p className="text-sm text-gray-500">Likes</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-semibold">
-                      {selectedPost.comments}
-                    </p>
-                    <p className="text-sm text-gray-500">Comments</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-semibold">
-                      {selectedPost.shares}
-                    </p>
-                    <p className="text-sm text-gray-500">Shares</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold">
-                  Additional Information
-                </h4>
-                <div className="flex items-center">
-                  <span className="font-semibold w-40">Location:</span>
-                  <span>{selectedPost.location}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-semibold w-40">Device:</span>
-                  <span>{selectedPost.device}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-semibold w-40">Platform:</span>
-                  <span>{selectedPost.platform}</span>
+                  <span>
+                    {" "}
+                    {dayjs(selectedPost.createdAt).format(
+                      "DD MMM YYYY, hh:mm A"
+                    )}
+                  </span>
                 </div>
               </div>
 
               {/* Action Buttons in Modal */}
               <div className="flex justify-end gap-4">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() =>
-                    handleManagePost(selectedPost.postId, "Reviewed")
-                  }
+                {/* <Button
+                  sx={{
+                    bgcolor: "#131927",
+                    color: "white",
+                    ":hover": { bgcolor: "#0095FF" },
+                    textTransform: "none",
+                  }}
+                  onClick={() => handleManagePost(selectedPost._id, "REVIEWED")}
+                  disabled={isStatusChanging}
                 >
                   Mark as Reviewed
-                </Button>
+                </Button> */}
                 <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() =>
-                    handleManagePost(selectedPost.postId, "Resolved")
-                  }
+                  sx={{
+                    bgcolor: "#0095FF",
+                    color: "white",
+                    ":hover": { bgcolor: "#131927" },
+                    textTransform: "none",
+                  }}
+                  onClick={() => handleManagePost(selectedPost._id, "RESOLVED")}
+                  disabled={isStatusChanging}
                 >
                   Mark as Resolved
                 </Button>
@@ -374,14 +267,6 @@ export default function ReportManagement() {
           )}
         </Box>
       </Modal>
-
-      {/* Snackbar for action confirmation */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        message={actionMessage}
-      />
     </div>
   );
 }
