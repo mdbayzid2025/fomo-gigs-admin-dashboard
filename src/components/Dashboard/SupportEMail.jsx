@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -7,80 +7,45 @@ import {
   TableCell,
   TableBody,
   TablePagination,
-  InputBase,
   InputAdornment,
   Modal,
   IconButton,
   TextField,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
-import { toast } from "sonner";
-
-const supportEmailData = [
-  {
-    name: "Samuel Johnson",
-    userName: "SJohnson",
-    phoneNumber: "+6908975678",
-    problemDescription:
-      "The user is not responding to messages. The issue started on 13th September.",
-    status: "Solved",
-    date: "2023-10-01",
-  },
-  {
-    name: "Emily Davis",
-    userName: "EDavis",
-    phoneNumber: "+6908981234",
-    problemDescription: "Unable to log into the system after password reset.",
-    status: "Pending",
-    date: "2023-10-02",
-  },
-  {
-    name: "Michael Smith",
-    userName: "MSmith",
-    phoneNumber: "+6908998765",
-    problemDescription:
-      "The user is reporting slow system performance during peak hours.",
-    status: "Pending",
-    date: "2023-10-03",
-  },
-  {
-    name: "Olivia Brown",
-    userName: "OBrown",
-    phoneNumber: "+6908884321",
-    problemDescription:
-      "The user is unable to access their profile page after recent updates.",
-    status: "Solved",
-    date: "2023-10-04",
-  },
-  {
-    name: "James Wilson",
-    userName: "JWilson",
-    phoneNumber: "+6908776543",
-    problemDescription:
-      "The user encountered a system crash during data upload.",
-    status: "Solved",
-    date: "2023-10-05",
-  },
-];
+// import { toast } from "sonner";
+import { useGetSupportDataQuery } from "../../Redux/api/supportApi";
+import dayjs from "dayjs";
 
 export default function SupportEmail() {
   const [searchText, setSearchText] = useState("");
-  const [filteredEmails, setFilteredEmails] = useState(supportEmailData);
+  const [filteredEmails, setFilteredEmails] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState(null);
-  const [replyText, setReplyText] = useState("");
+  // const [replyText, setReplyText] = useState("");
+
+  const { data: supportData, isLoading, isError } = useGetSupportDataQuery();
+  const support = supportData?.data.data || [];
+  console.log("support data", support);
+
+  useEffect(() => {
+    if (support.length) {
+      setFilteredEmails(support);
+    }
+  }, [support]);
 
   const handleSearchChange = (e) => {
-    const search = e.target.value;
+    const search = e.target.value.toLowerCase();
     setSearchText(search);
-    const filtered = supportEmailData.filter(
+    const filtered = support.filter(
       (email) =>
-        email.userName.toLowerCase().includes(search.toLowerCase()) ||
-        email.phoneNumber.includes(search)
+        email.name.toLowerCase().includes(search) ||
+        email.email.includes(search)
     );
     setFilteredEmails(filtered);
     setPage(0);
@@ -96,38 +61,54 @@ export default function SupportEmail() {
 
   const handleOpenModal = (email) => {
     setSelectedEmail(email);
-    setReplyText("");
+    // setReplyText("");
     setOpenDetailsModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenDetailsModal(false);
     setSelectedEmail(null);
-    setReplyText("");
+    // setReplyText("");
   };
 
-  const handleSendReply = () => {
-    if (!replyText.trim()) {
-      toast.error("Please type a reply before sending.");
-      return;
-    }
+  // const handleSendReply = () => {
+  //   if (!replyText.trim()) {
+  //     toast.error("Please type a reply before sending.");
+  //     return;
+  //   }
 
-    const updatedEmails = filteredEmails.map((email) =>
-      email.phoneNumber === selectedEmail.phoneNumber
-        ? { ...email, status: "Solved" }
-        : email
+  //   const updatedEmails = filteredEmails.map((email) =>
+  //     email.phoneNumber === selectedEmail.phoneNumber
+  //       ? { ...email, status: "Solved" }
+  //       : email
+  //   );
+
+  //   setFilteredEmails(updatedEmails);
+
+  //   console.log("Sending reply:", replyText);
+  //   console.log("To:", selectedEmail.userName);
+
+  //   toast.success("Reply sent successfully!");
+
+  //   setReplyText("");
+  //   handleCloseModal();
+  // };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
     );
+  }
 
-    setFilteredEmails(updatedEmails);
-
-    console.log("Sending reply:", replyText);
-    console.log("To:", selectedEmail.userName);
-
-    toast.success("Reply sent successfully!");
-
-    setReplyText("");
-    handleCloseModal();
-  };
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <p className="text-red-500">Something went wrong</p>
+      </div>
+    );
+  }
 
   return (
     <div className="px-10 py-8 bg-[#fbfbfb] h-[92vh]">
@@ -186,7 +167,7 @@ export default function SupportEmail() {
                   fontSize: "14px",
                 }}
               >
-                Phone Number
+                Email
               </TableCell>
               <TableCell
                 sx={{
@@ -196,7 +177,7 @@ export default function SupportEmail() {
                   fontSize: "14px",
                 }}
               >
-                Problem Description
+                Problem Message
               </TableCell>
               <TableCell
                 sx={{
@@ -224,15 +205,15 @@ export default function SupportEmail() {
             {filteredEmails
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((email) => (
-                <TableRow key={email.phoneNumber}>
+                <TableRow key={email._id}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {email.userName}
+                    {email.name}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {email.phoneNumber}
+                    {email.email}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {email.problemDescription}
+                    {email.message}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
                     <span
@@ -265,7 +246,7 @@ export default function SupportEmail() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={supportEmailData.length}
+        count={filteredEmails.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -285,7 +266,7 @@ export default function SupportEmail() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 600,
+            width: 750,
             backgroundColor: "#FDFDFD",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             padding: "20px",
@@ -301,24 +282,26 @@ export default function SupportEmail() {
                 <div className="flex justify-between w-full gap-10">
                   <div>
                     <p className="font-semibold">From:</p>
-                    <p>{selectedEmail.userName}</p>
+                    <p>{selectedEmail.name}</p>
                   </div>
                   <div>
-                    <p className="font-semibold">Phone Number:</p>
-                    <p>{selectedEmail.phoneNumber}</p>
+                    <p className="font-semibold">Email:</p>
+                    <p>{selectedEmail.email}</p>
                   </div>
                   <div>
                     <p className="font-semibold">Date:</p>
-                    <p>{selectedEmail.date}</p>
+                    <p>
+                      {dayjs(selectedEmail.createdAt).format(
+                        "DD MMM YYYY, hh:mm A"
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div>
                   <p className="font-semibold">Message:</p>
-                  <p className="text-justify">
-                    {selectedEmail.problemDescription}
-                  </p>
+                  <p className="text-justify">{selectedEmail.message}</p>
                 </div>
-                <div className="flex flex-col gap-2">
+                {/* <div className="flex flex-col gap-2">
                   <p className="font-semibold">Your Reply</p>
                   <TextField
                     className="w-full"
@@ -376,7 +359,7 @@ export default function SupportEmail() {
                       Send
                     </Button>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           )}
