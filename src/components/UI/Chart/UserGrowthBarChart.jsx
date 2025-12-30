@@ -16,6 +16,21 @@ export default function UserGrowthBarChart({ selectedYear, growthData }) {
   // console.log("selectedYear", selectedYear);
   // console.log("growthData", growthData);
 
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   useEffect(() => {
     if (growthData && Array.isArray(growthData.chart)) {
       if (growthData.year == selectedYear) {
@@ -44,6 +59,7 @@ export default function UserGrowthBarChart({ selectedYear, growthData }) {
           <CartesianGrid stroke="#aaa" strokeDasharray="1 3" />
           <XAxis
             dataKey="month"
+            tickFormatter={(month) => monthNames[month - 1]}
             style={{
               fontSize: "12px",
               fontWeight: "bold",

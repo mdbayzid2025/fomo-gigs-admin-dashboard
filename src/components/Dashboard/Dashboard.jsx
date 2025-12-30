@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 
 import UserGrowthBarChart from "../UI/Chart/UserGrowthBarChart";
-import EventsGrowthAreaChart from "../UI/Chart/EventsGrowthAreaChart";
 
 import {
   useGetEventsGrowthDataQuery,
   useGetStatsDataQuery,
   useGetUserGrowthDataQuery,
 } from "../../Redux/api/overviewApi";
+import EventsGrowthBarChart from "../UI/Chart/EventsGrowthBarChart";
 
 export default function Dashboard() {
   const [userGrowthByYear, setUserGrowthByYear] = useState(2025);
@@ -177,7 +177,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex mt-5 h-full">
-              <EventsGrowthAreaChart
+              <EventsGrowthBarChart
                 selectedYear={eventsGrowthByYear}
                 eventsData={eventsData}
               />
