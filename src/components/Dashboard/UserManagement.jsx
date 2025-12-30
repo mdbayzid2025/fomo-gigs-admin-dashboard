@@ -11,17 +11,21 @@ import {
   IconButton,
   Modal,
   TextField,
-  CardContent,
-  Typography,
-  Box,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { useGetAllUsersQuery } from "../../Redux/api/usersApi";
+import { MdDelete } from "react-icons/md";
+
+import {
+  useDeleteUserMutation,
+  useGetAllUsersQuery,
+} from "../../Redux/api/usersApi";
 import Info from "../UI/Info";
 import { getImageUrl } from "../../utils/baseUrl";
+import { toast } from "sonner";
 
 export default function UserManagement() {
   const [searchText, setSearchText] = useState("");
@@ -30,10 +34,17 @@ export default function UserManagement() {
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const imageUrl = getImageUrl();
 
-  const { data: allUserData, isLoading, isError } = useGetAllUsersQuery();
-
+  const {
+    data: allUserData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetAllUsersQuery();
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
   const userData = allUserData?.data?.data || [];
   console.log("userdata", userData);
 
@@ -71,6 +82,34 @@ export default function UserManagement() {
   const handleCloseModal = () => {
     setOpenDetailsModal(false);
     setSelectedUser(null);
+  };
+
+  const handleOpenDeleteModal = (user) => {
+    setUserToDelete(user);
+    setOpenDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setUserToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+
+    try {
+      const deleteResponse = await deleteUser(userToDelete._id).unwrap();
+      console.log("deleteResponse", deleteResponse);
+      if (deleteResponse.success) {
+        refetch();
+        toast.success("User Deleted Succesfully");
+        handleCloseDeleteModal();
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.error("Delete failed", error);
+      toast.error("Something Went Wrong");
+    }
   };
 
   if (isLoading) {
@@ -114,7 +153,6 @@ export default function UserManagement() {
           }}
         />
       </div>
-
       {/* Table */}
       <TableContainer sx={{ borderRadius: 2, boxShadow: 1 }}>
         <Table>
@@ -176,7 +214,6 @@ export default function UserManagement() {
           </TableBody>
         </Table>
       </TableContainer>
-
       {/* Pagination */}
       <TablePagination
         component="div"
@@ -187,7 +224,6 @@ export default function UserManagement() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
       {/* Modal */}
       <Modal open={openDetailsModal} onClose={handleCloseModal}>
         <div className="absolute top-1/2 left-1/2 w-[95%] max-w-[600px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-6 outline-none">
@@ -258,8 +294,72 @@ export default function UserManagement() {
                   value={new Date(selectedUser.createdAt).toLocaleDateString()}
                 />
               </div>
+              <div className="flex justify-center mt-4">
+                <Button
+                  onClick={() => handleOpenDeleteModal(selectedUser)}
+                  sx={{
+                    bgcolor: "#131927",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    color: "white",
+
+                    textTransform: "none",
+                    px: "20px",
+                    borderRadius: "10px",
+                    ":hover": {
+                      bgcolor: "#FF2202",
+                    },
+                  }}
+                >
+                  <MdDelete size={18} />
+                  Delete User
+                </Button>
+              </div>
             </>
           )}
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal open={openDeleteModal} onClose={handleCloseDeleteModal}>
+        <div className="absolute top-1/2 left-1/2 w-[90%] max-w-[400px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-6 outline-none">
+          <h2 className="text-lg font-semibold text-center mb-3">
+            Confirm Deletion
+          </h2>
+
+          <p className="text-sm text-gray-600 text-center mb-6">
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">{userToDelete?.name}</span>? This
+            action cannot be undone.
+          </p>
+
+          <div className="flex justify-center gap-4">
+            <Button
+              variant="outlined"
+              onClick={handleCloseDeleteModal}
+              disabled={isDeleting}
+              sx={{ textTransform: "none", borderRadius: "10px" }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              sx={{
+                bgcolor: "#FF2202",
+                color: "white",
+                textTransform: "none",
+                borderRadius: "10px",
+                ":hover": {
+                  bgcolor: "#d91c02",
+                },
+              }}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>

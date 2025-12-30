@@ -16,6 +16,22 @@ const overviewApi = baseApi.injectEndpoints({
       },
       providesTags: ["user"],
     }),
+
+    deleteUser: builder.mutation({
+      query: (id) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("gsd at", accessToken);
+        return {
+          url: `/users/${id}`,
+          method: "delete",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: ["users"],
+    }),
+
     getServiceProviders: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
@@ -85,4 +101,5 @@ export const {
   useChangeProviderStatusMutation,
   useGetProfileQuery,
   useEditProfileMutation,
+  useDeleteUserMutation,
 } = overviewApi;
