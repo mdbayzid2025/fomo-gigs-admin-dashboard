@@ -54,9 +54,14 @@ export default function Sidebar() {
             label: "User Management",
           },
           {
-            to: "/category-management",
+            to: "/service-category",
             icon: <LuNotepadText className=" lg:text-2xl" />,
             label: "Service Category",
+          },
+          {
+            to: "/event-category",
+            icon: <LuNotepadText className=" lg:text-2xl" />,
+            label: "Event Category",
           },
           {
             to: "/event-management",
