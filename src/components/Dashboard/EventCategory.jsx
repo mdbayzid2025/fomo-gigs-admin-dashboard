@@ -19,16 +19,17 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { MdEdit, MdDelete, MdAdd, MdImage } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+
+import { getImageUrl } from "../../utils/baseUrl";
+import { toast } from "sonner";
 import {
   useAddCategoryMutation,
   useDeleteCategoryMutation,
   useEditCategoryMutation,
-  useGetServiceCategoriesQuery,
-} from "../../Redux/api/serviceApi";
-import { getImageUrl } from "../../utils/baseUrl";
-import { toast } from "sonner";
+  useGetEventCategoriesQuery,
+} from "../../Redux/api/eventApi";
 
-export default function CategoryManagement() {
+export default function EventCategory() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
@@ -36,7 +37,7 @@ export default function CategoryManagement() {
   const [modalMode, setModalMode] = useState(""); // 'add', 'edit', 'delete'
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formData, setFormData] = useState({
-    serviceName: "",
+    categoryName: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -48,7 +49,7 @@ export default function CategoryManagement() {
     isLoading,
     isError,
     refetch,
-  } = useGetServiceCategoriesQuery();
+  } = useGetEventCategoriesQuery();
   const categories = allCategoryData?.data || [];
   console.log("categories data", categories);
 
@@ -59,19 +60,19 @@ export default function CategoryManagement() {
     useDeleteCategoryMutation();
 
   const filteredCategories = categories.filter((cat) =>
-    cat.serviceName.toLowerCase().includes(searchText.toLowerCase())
+    cat.categoryName.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const handleOpenModal = (mode, category = null) => {
     setModalMode(mode);
     setSelectedCategory(category);
     if (mode === "add") {
-      setFormData({ serviceName: "" });
+      setFormData({ categoryName: "" });
       setImageFile(null);
       setImagePreview(null);
     } else if (mode === "edit" && category) {
       setFormData({
-        serviceName: category.serviceName,
+        categoryName: category.categoryName,
       });
       setImagePreview(category.image || null);
       setImageFile(null);
@@ -83,7 +84,7 @@ export default function CategoryManagement() {
     setOpenModal(false);
     setSelectedCategory(null);
     setModalMode("");
-    setFormData({ serviceName: "" });
+    setFormData({ categoryName: "" });
     setImageFile(null);
     setImagePreview(null);
   };
@@ -114,7 +115,7 @@ export default function CategoryManagement() {
     try {
       if (modalMode === "add") {
         // Validate input
-        if (!formData.serviceName.trim()) {
+        if (!formData.categoryName.trim()) {
           toast.warning("Please enter a category name");
           return;
         }
@@ -122,7 +123,7 @@ export default function CategoryManagement() {
         const formDataToSend = new FormData();
         formDataToSend.append(
           "data",
-          JSON.stringify({ serviceName: formData.serviceName })
+          JSON.stringify({ categoryName: formData.categoryName })
         );
         if (imageFile) {
           formDataToSend.append("image", imageFile);
@@ -137,7 +138,7 @@ export default function CategoryManagement() {
         }
       } else if (modalMode === "edit") {
         // Validate input
-        if (!formData.serviceName.trim()) {
+        if (!formData.categoryName.trim()) {
           toast.warning("Please enter a category name");
           return;
         }
@@ -145,7 +146,7 @@ export default function CategoryManagement() {
         const formDataToSend = new FormData();
         // formDataToSend.append(
         //   "data",
-        //   JSON.stringify({ serviceName: formData.serviceName })
+        //   JSON.stringify({ categoryName: formData.categoryName })
         // );
         if (imageFile) {
           formDataToSend.append("image", imageFile);
@@ -201,33 +202,36 @@ export default function CategoryManagement() {
   return (
     <div className="px-10 py-8 bg-[#fbfbfb] h-[92vh]">
       {/* Header with Search and Add Button */}
-      <div className="flex justify-end gap-3 items-center mb-4">
-        <TextField
-          sx={{ width: 300 }}
-          placeholder="Search Category"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FaSearch />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          startIcon={<MdAdd />}
-          onClick={() => handleOpenModal("add")}
-          sx={{
-            backgroundColor: "#1976d2",
-            textTransform: "none",
-            "&:hover": { backgroundColor: "#1565c0" },
-          }}
-        >
-          Add Category
-        </Button>
+      <div className="flex justify-between gap-3 items-center mb-4">
+        <p className="text-xl font-semibold">Event Categories</p>{" "}
+        <div className="flex items-center gap-3">
+          <TextField
+            sx={{ width: 300 }}
+            placeholder="Search Category"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FaSearch />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            startIcon={<MdAdd />}
+            onClick={() => handleOpenModal("add")}
+            sx={{
+              backgroundColor: "#1976d2",
+              textTransform: "none",
+              "&:hover": { backgroundColor: "#1565c0" },
+            }}
+          >
+            Add Category
+          </Button>
+        </div>
       </div>
 
       {/* Table */}
@@ -267,7 +271,7 @@ export default function CategoryManagement() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((category) => (
                 <TableRow key={category._id}>
-                  <TableCell align="center">{category.serviceName}</TableCell>
+                  <TableCell align="center">{category.categoryName}</TableCell>
                   <TableCell align="center">
                     {new Date(category.createdAt).toLocaleDateString()}
                   </TableCell>
@@ -314,7 +318,8 @@ export default function CategoryManagement() {
             <>
               <h2 className="text-xl font-bold mb-4">Delete Category</h2>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete "{selectedCategory?.serviceName}
+                Are you sure you want to delete "
+                {selectedCategory?.categoryName}
                 "? This action cannot be undone.
               </p>
               <div className="flex justify-end gap-3">
@@ -357,8 +362,8 @@ export default function CategoryManagement() {
               <TextField
                 fullWidth
                 label="Category Name"
-                name="serviceName"
-                value={formData.serviceName}
+                name="categoryName"
+                value={formData.categoryName}
                 onChange={handleInputChange}
                 margin="normal"
                 required

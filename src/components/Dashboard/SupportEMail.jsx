@@ -17,8 +17,12 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
 // import { toast } from "sonner";
-import { useGetSupportDataQuery } from "../../Redux/api/interactApi";
+import {
+  useGetSupportDataQuery,
+  useUpdateSupportStatusMutation,
+} from "../../Redux/api/interactApi";
 import dayjs from "dayjs";
+import { toast } from "sonner";
 
 export default function SupportEmail() {
   const [searchText, setSearchText] = useState("");
@@ -29,9 +33,17 @@ export default function SupportEmail() {
   const [selectedEmail, setSelectedEmail] = useState(null);
   // const [replyText, setReplyText] = useState("");
 
-  const { data: supportData, isLoading, isError } = useGetSupportDataQuery();
+  const {
+    data: supportData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetSupportDataQuery();
   const support = supportData?.data.data || [];
   console.log("support data", support);
+
+  const [changeStatus, { isLoading: changingStatus }] =
+    useUpdateSupportStatusMutation();
 
   useEffect(() => {
     if (support.length) {
@@ -71,6 +83,27 @@ export default function SupportEmail() {
     // setReplyText("");
   };
 
+  const handleStatusChange = async (requestId, newStatus) => {
+    console.log(requestId);
+    try {
+      // Call the mutation with the report ID and new status
+      const result = await changeStatus({
+        id: requestId,
+        status: newStatus,
+      }).unwrap();
+      console.log(result);
+
+      if (result.success) {
+        refetch();
+        toast.success("Support Status Updated Successfully.");
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.error("Error updating support status:", error);
+      toast.error("Failed to update support status.");
+    }
+  };
+
   // const handleSendReply = () => {
   //   if (!replyText.trim()) {
   //     toast.error("Please type a reply before sending.");
@@ -94,7 +127,7 @@ export default function SupportEmail() {
   //   handleCloseModal();
   // };
 
-  if (isLoading) {
+  if (isLoading || changingStatus) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
         <CircularProgress />
@@ -222,13 +255,16 @@ export default function SupportEmail() {
                         borderRadius: "12px",
                         color: "white",
                         backgroundColor:
-                          email.status.toLowerCase() === "solved"
-                            ? "#1EC74F"
+                          email.status?.toLowerCase() === "resolved"
+                            ? "#2E8B57"
                             : "#EE5252", // Adjust the status color as per the status
                         fontWeight: "600",
                       }}
                     >
-                      {email.status}
+                      {email?.status
+                        ? email.status.charAt(0).toUpperCase() +
+                          email.status.slice(1).toLowerCase()
+                        : ""}
                     </span>
                   </TableCell>
 
@@ -360,6 +396,47 @@ export default function SupportEmail() {
                     </Button>
                   </div>
                 </div> */}
+
+                <div className="flex items-center justify-between gap-2">
+                  <p>
+                    Current Status:{" "}
+                    <span
+                      className={`px-3 py-1.5 rounded-xl text-white font-semibold ${
+                        selectedEmail.status?.toLowerCase() === "resolved"
+                          ? "bg-[#2E8B57]"
+                          : "bg-red-500"
+                      }`}
+                    >
+                      {selectedEmail?.status
+                        ? selectedEmail.status.charAt(0).toUpperCase() +
+                          selectedEmail.status.slice(1).toLowerCase()
+                        : ""}
+                    </span>
+                  </p>
+                  {selectedEmail.status !== "RESOLVED" && (
+                    <Button
+                      onClick={() =>
+                        handleStatusChange(selectedEmail._id, "RESOLVED")
+                      }
+                      disabled={changingStatus}
+                      sx={{
+                        textTransform: "none",
+                        px: "10px",
+                        py: "6px",
+                        bgcolor: "#3B82F6",
+                        color: "#FFFFFF",
+                        fontWeight: 500,
+                        fontSize: "0.875rem",
+                        borderRadius: "0.375rem",
+                        "&:hover": {
+                          bgcolor: "#2563EB",
+                        },
+                      }}
+                    >
+                      Change to Resolve
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -89,7 +89,7 @@ export default function ReportManagement() {
 
   // Status pill style helper
   const statusClass = (status) => {
-    return status === "REVIEWED"
+    return status === "RESOLVED"
       ? "bg-green-500 text-white"
       : status === "PENDING"
       ? "bg-yellow-500 text-black"
@@ -164,7 +164,10 @@ export default function ReportManagement() {
                         post.status
                       )}`}
                     >
-                      {post.status}
+                      {post?.status
+                        ? post.status.charAt(0).toUpperCase() +
+                          post.status.slice(1).toLowerCase()
+                        : ""}
                     </span>
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
@@ -250,18 +253,22 @@ export default function ReportManagement() {
                 >
                   Mark as Reviewed
                 </Button> */}
-                <Button
-                  sx={{
-                    bgcolor: "#0095FF",
-                    color: "white",
-                    ":hover": { bgcolor: "#131927" },
-                    textTransform: "none",
-                  }}
-                  onClick={() => handleManagePost(selectedPost._id, "RESOLVED")}
-                  disabled={isStatusChanging}
-                >
-                  Mark as Resolved
-                </Button>
+                {selectedPost.status !== "RESOLVED" && (
+                  <Button
+                    sx={{
+                      bgcolor: "#0095FF",
+                      color: "white",
+                      ":hover": { bgcolor: "#131927" },
+                      textTransform: "none",
+                    }}
+                    onClick={() =>
+                      handleManagePost(selectedPost._id, "RESOLVED")
+                    }
+                    disabled={isStatusChanging}
+                  >
+                    Mark as Resolved
+                  </Button>
+                )}
               </div>
             </div>
           )}

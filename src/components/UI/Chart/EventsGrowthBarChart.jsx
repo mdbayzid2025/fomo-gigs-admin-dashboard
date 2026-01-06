@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -9,13 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function EventsGrowthAreaChart({ selectedYear, eventsData }) {
+export default function EventsGrowthBarChart({ selectedYear, eventsData }) {
   const [chartData, setChartData] = useState([]);
-
-  console.log(chartData);
-
-  console.log("selectedYear", selectedYear);
-  console.log("eventsData", eventsData);
 
   useEffect(() => {
     if (eventsData && Array.isArray(eventsData.chart)) {
@@ -35,34 +30,37 @@ export default function EventsGrowthAreaChart({ selectedYear, eventsData }) {
     );
   }
 
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   return (
     <div
       className="w-full"
-      aria-label={`Area chart showing growth for the year ${selectedYear}`}
+      aria-label={`Bar chart showing event growth for the year ${selectedYear}`}
       role="img"
     >
       <ResponsiveContainer width="100%" height={250}>
-        <AreaChart
+        <BarChart
           data={chartData}
           margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
         >
-          {/* Define gradient fill */}
-          <defs>
-            <linearGradient
-              id="growthGradient"
-              x1="0%"
-              y1="0%"
-              x2="120%"
-              y2="150%"
-            >
-              <stop offset="10%" stopColor="#0095FF" stopOpacity={1} />
-              <stop offset="90%" stopColor="#131927" stopOpacity={1} />
-            </linearGradient>
-          </defs>
-
           <CartesianGrid strokeDasharray="3" />
+
           <XAxis
             dataKey="month"
+            tickFormatter={(month) => monthNames[month - 1]}
             style={{
               fontSize: "12px",
               fontWeight: "bold",
@@ -75,18 +73,16 @@ export default function EventsGrowthAreaChart({ selectedYear, eventsData }) {
               fontWeight: "bold",
             }}
           />
+
           <Tooltip />
 
-          {/* Apply the gradient fill to the Area chart */}
-          <Area
-            type="monotone"
+          <Bar
             dataKey="eventCount"
-            stroke="#131927"
-            fill="url(#growthGradient)" // Apply the gradient fill
-            strokeWidth={2}
-            activeDot={{ r: 5 }}
+            fill="#131927"
+            barSize={25}
+            radius={[6, 6, 0, 0]}
           />
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

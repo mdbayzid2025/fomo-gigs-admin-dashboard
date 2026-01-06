@@ -13,6 +13,7 @@ import {
   TextField,
   IconButton,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
@@ -23,6 +24,7 @@ import { getImageUrl } from "../../utils/baseUrl";
 export default function EventManagement() {
   const [searchText, setSearchText] = useState("");
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
@@ -30,8 +32,15 @@ export default function EventManagement() {
   const imageUrl = getImageUrl();
 
   const { data: allEvents, isLoading, isError } = useGetAllEventsQuery();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const events = allEvents?.data || [];
   console.log("events", events);
+
+  const statusOptions = [
+    "ALL",
+    ...Array.from(new Set(events.map((event) => event.status).filter(Boolean))),
+  ];
+  console.log(statusOptions);
 
   useEffect(() => {
     if (events.length) {
@@ -39,17 +48,35 @@ export default function EventManagement() {
     }
   }, [events]);
 
+  const applyFilters = (search, status) => {
+    let filtered = events;
+
+    if (search) {
+      filtered = filtered.filter(
+        (event) =>
+          event._id?.toLowerCase().includes(search) ||
+          event.eventId?.toLowerCase().includes(search) ||
+          event.title?.toLowerCase().includes(search)
+      );
+    }
+
+    if (status !== "ALL") {
+      filtered = filtered.filter((event) => event.status === status);
+    }
+
+    setFilteredEvents(filtered);
+    setPage(0);
+  };
+
   const handleSearchChange = (e) => {
     const search = e.target.value.toLowerCase();
     setSearchText(search);
-    const filtered = events.filter(
-      (event) =>
-        event._id.toLowerCase().includes(search) ||
-        event.eventId.toLowerCase().includes(search) ||
-        event.title.toLowerCase().includes(search)
-    );
-    setFilteredEvents(filtered);
-    setPage(0);
+    applyFilters(search, statusFilter);
+  };
+
+  const handleStatusChange = (status) => {
+    setStatusFilter(status);
+    applyFilters(searchText, status);
   };
 
   const handleChangePage = (_event, newPage) => setPage(newPage);
@@ -113,7 +140,7 @@ export default function EventManagement() {
   return (
     <div className="px-10 py-8 bg-[#fbfbfb] min-h-[92vh]">
       {/* Search */}
-      <div className="flex items-center justify-end mb-6">
+      <div className="flex items-center justify-end mb-6 gap-3">
         <TextField
           sx={{
             width: 300,
@@ -124,7 +151,7 @@ export default function EventManagement() {
             height: "40px",
             "& .MuiInputBase-root": { height: "100%" },
           }}
-          placeholder="Search by ID, Event ID or Title"
+          placeholder="Search by Event ID or Title"
           value={searchText}
           onChange={handleSearchChange}
           InputProps={{
@@ -135,6 +162,33 @@ export default function EventManagement() {
             ),
           }}
         />
+        {/* Status Filters (from real data) */}
+        <div className="flex gap-3 flex-wrap">
+          {statusOptions.map((status) => (
+            <Button
+              key={status}
+              onClick={() => handleStatusChange(status)}
+              sx={{
+                px: 3,
+                py: 1,
+                borderRadius: "999px",
+                fontSize: "14px",
+                fontWeight: 500,
+                textTransform: "none",
+                minWidth: "auto",
+                bgcolor: statusFilter === status ? "#131927" : "#e5e7eb",
+                color: statusFilter === status ? "#fff" : "#374151",
+                "&:hover": {
+                  bgcolor: statusFilter === status ? "#131927" : "#d1d5db",
+                },
+              }}
+            >
+              {status === "ALL"
+                ? "All"
+                : status.charAt(0) + status.slice(1).toLowerCase()}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Table */}
@@ -419,15 +473,48 @@ export default function EventManagement() {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
+                    <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
                       <div className="text-2xl">📌</div>
                       <div>
-                        <p className="text-sm text-gray-700">
-                          <span className="font-bold">Total Available:</span>{" "}
-                          {selectedEvent.totalAvailable} •{" "}
-                          <span className="font-bold">Max per User:</span>{" "}
-                          {selectedEvent.maxTicketsPerUser}
-                        </p>
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium">
+                            <span className="font-bold">Total Available:</span>{" "}
+                            {selectedEvent.totalAvailable} •{" "}
+                            <span className="font-bold">Max per User:</span>{" "}
+                            {selectedEvent.maxTicketsPerUser || "N/A"}
+                          </p>
+                        </div>
+                        <div className="flex gap-2 text-sm text-gray-700 font-bold mt-2">
+                          <p>
+                            Total Tickets Sold:{" "}
+                            <span className="text-gray-700 font-medium">
+                              {selectedEvent?.tiers.reduce(
+                                (total, tier) => total + (tier.sold || 0),
+                                0
+                              )}
+                            </span>
+                          </p>
+                          •{" "}
+                          <p>
+                            Total Revenue:{" "}
+                            <span className="text-gray-700 font-medium ">
+                              $
+                              {selectedEvent?.tiers.reduce(
+                                (total, tier) =>
+                                  total + (tier.sold || 0) * (tier.price || 0),
+                                0
+                              )}
+                            </span>
+                          </p>
+                        </div>{" "}
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-700 font-medium">
+                            <span className="font-bold">
+                              Cancelled Tickets:
+                            </span>{" "}
+                            {selectedEvent?.cancelledTicketsCount}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>

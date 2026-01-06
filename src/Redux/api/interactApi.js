@@ -16,6 +16,22 @@ const interactApi = baseApi.injectEndpoints({
       },
       providesTags: ["interact"],
     }),
+    updateSupportStatus: builder.mutation({
+      query: ({ id, status }) => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log(accessToken);
+        console.log(id, status);
+        return {
+          url: `/support/${id}/status`,
+          method: "PATCH",
+          body: { status },
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["SupportEmail"],
+    }),
     getReportsData: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
@@ -51,6 +67,7 @@ const interactApi = baseApi.injectEndpoints({
 
 export const {
   useGetSupportDataQuery,
+  useUpdateSupportStatusMutation,
   useGetReportsDataQuery,
   useChangeReportStatusMutation,
 } = interactApi;
