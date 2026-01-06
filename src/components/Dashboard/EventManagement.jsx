@@ -506,6 +506,14 @@ export default function EventManagement() {
                               )}
                             </span>
                           </p>
+                        </div>{" "}
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-700 font-medium">
+                            <span className="font-bold">
+                              Cancelled Tickets:
+                            </span>{" "}
+                            {selectedEvent?.cancelledTicketsCount}
+                          </p>
                         </div>
                       </div>
                     </div>
