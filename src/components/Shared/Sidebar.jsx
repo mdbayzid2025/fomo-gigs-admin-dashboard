@@ -10,6 +10,7 @@ import { HiOutlinePresentationChartLine } from "react-icons/hi";
 import { LuBookText } from "react-icons/lu";
 import { IoDiamondOutline } from "react-icons/io5";
 import { TbMessageReport } from "react-icons/tb";
+import { GrSystem } from "react-icons/gr";
 
 import { Link, NavLink } from "react-router-dom";
 
@@ -87,6 +88,11 @@ export default function Sidebar() {
             to: "/report-management",
             icon: <TbMessageReport className=" lg:text-2xl" />,
             label: "Manage Reports",
+          },
+          {
+            to: "/system-health",
+            icon: <GrSystem className=" lg:text-2xl" />,
+            label: "System Health",
           },
           {
             to: "/settings",

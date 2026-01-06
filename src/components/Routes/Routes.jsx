@@ -24,6 +24,7 @@ import ReportManagement from "../Dashboard/ReportManagement";
 import ProtectedRoute from "../../utils/ProtectedRoute";
 import ServiceCategory from "../Dashboard/ServiceCategory";
 import EventCategory from "../Dashboard/EventCategory";
+import SystemHealth from "../Dashboard/SystemHealth";
 
 const router = createBrowserRouter([
   {
@@ -97,6 +98,10 @@ const router = createBrowserRouter([
           {
             path: "report-management",
             element: <ReportManagement />,
+          },
+          {
+            path: "system-health",
+            element: <SystemHealth />,
           },
           {
             path: "settings",
