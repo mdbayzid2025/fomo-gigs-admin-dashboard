@@ -62,6 +62,20 @@ const interactApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["interact"],
     }),
+    getSystemHealth: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log(accessToken);
+        return {
+          url: "/system-health",
+          method: "get",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["interact"],
+    }),
   }),
 });
 
@@ -70,4 +84,5 @@ export const {
   useUpdateSupportStatusMutation,
   useGetReportsDataQuery,
   useChangeReportStatusMutation,
+  useGetSystemHealthQuery,
 } = interactApi;
