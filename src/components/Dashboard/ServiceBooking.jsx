@@ -14,46 +14,59 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Avatar,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
-import { MdVisibility } from "react-icons/md";
-import { IoClose } from "react-icons/io5";
+import { MdVisibility, MdWork } from "react-icons/md";
+import { IoClose, IoLocationOutline, IoMailOutline } from "react-icons/io5";
+import { LuBanknote } from "react-icons/lu";
+import { FiAlertTriangle } from "react-icons/fi";
+import { FaCheckCircle } from "react-icons/fa";
+import { IoMdCloseCircle } from "react-icons/io";
+
 import { useGetServiceBookingsQuery } from "../../Redux/api/serviceApi";
+import { getImageUrl } from "../../utils/baseUrl";
 
 export default function ServiceBooking() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openModal, setOpenModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedProvider, setSelectedProvider] = useState(null);
 
-  const { data: bookingData, isLoading, isError } = useGetServiceBookingsQuery();
-  const bookings = bookingData?.data || [];
-  console.log("service bookings", bookings);
+  const imageUrl = getImageUrl();
 
-  const filteredBookings = bookings.filter(
-    (booking) =>
-      booking.serviceName?.toLowerCase().includes(searchText.toLowerCase()) ||
-      booking.customerName?.toLowerCase().includes(searchText.toLowerCase())
+  const {
+    data: bookingData,
+    isLoading,
+    isError,
+  } = useGetServiceBookingsQuery();
+  const providers = bookingData?.data || [];
+  console.log("service bookings", providers);
+
+  const filteredProviders = providers.filter(
+    (provider) =>
+      provider.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      provider.email?.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  const handleOpenModal = (booking) => {
-    setSelectedBooking(booking);
+  const handleOpenModal = (provider) => {
+    setSelectedProvider(provider);
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedBooking(null);
+    setSelectedProvider(null);
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Completed":
+      case "APPROVED":
         return "success";
-      case "Pending":
+      case "PENDING":
         return "warning";
-      case "Cancelled":
+      case "REJECTED":
         return "error";
       default:
         return "default";
@@ -71,7 +84,7 @@ export default function ServiceBooking() {
   if (isError) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
-        <p className="text-red-500 text-lg">Failed to load bookings.</p>
+        <p className="text-red-500 text-lg">Failed to load booking data.</p>
       </div>
     );
   }
@@ -80,11 +93,11 @@ export default function ServiceBooking() {
     <div className="px-10 py-8 bg-[#fbfbfb] h-[92vh]">
       {/* Header with Search */}
       <div className="flex justify-between gap-3 items-center mb-4">
-        <p className="text-xl font-semibold">Service Booking</p>
+        <p className="text-xl font-semibold">Service Booking Stats</p>
         <div className="flex items-center gap-3">
           <TextField
             sx={{ width: 300 }}
-            placeholder="Search Service or Customer"
+            placeholder="Search Name or Email"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             size="small"
@@ -105,19 +118,22 @@ export default function ServiceBooking() {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Service Name
+                Name
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Customer
+                Email
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Provider
+                Location
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Date
+                Total Bookings
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Amount
+                Completed
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "600" }}>
+                Total Revenue
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
                 Status
@@ -129,28 +145,55 @@ export default function ServiceBooking() {
           </TableHead>
 
           <TableBody>
-            {filteredBookings
+            {filteredProviders
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((booking) => (
-                <TableRow key={booking._id}>
-                  <TableCell align="center">{booking.serviceName}</TableCell>
-                  <TableCell align="center">{booking.customerName}</TableCell>
-                  <TableCell align="center">{booking.providerName}</TableCell>
+              .map((row, index) => (
+                <TableRow key={row.serviceProviderId || index}>
                   <TableCell align="center">
-                    {new Date(booking.date).toLocaleDateString()}
+                    <div className="flex items-center gap-2 justify-center">
+                      <img
+                        src={`${imageUrl}${row.profileImage}`}
+                        alt={row.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      {row.name}
+                    </div>
                   </TableCell>
-                  <TableCell align="center">{booking.amount}</TableCell>
+                  <TableCell align="center">{row.email}</TableCell>
+                  <TableCell align="center">
+                    {row.city}, {row.country}
+                  </TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={booking.status}
-                      color={getStatusColor(booking.status)}
+                      label={row.totalBookings}
+                      size="small"
+                      sx={{
+                        backgroundColor: "#E3F2FD",
+                        color: "#1976D2",
+                        fontWeight: 600,
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className="text-green-600 font-medium"
+                  >
+                    {row.completedBookings}
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 600 }}>
+                    ${row.totalRevenue}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      label={row.status}
+                      color={getStatusColor(row.status)}
                       size="small"
                       variant="outlined"
                     />
                   </TableCell>
                   <TableCell align="center">
                     <IconButton
-                      onClick={() => handleOpenModal(booking)}
+                      onClick={() => handleOpenModal(row)}
                       color="primary"
                     >
                       <MdVisibility />
@@ -164,7 +207,7 @@ export default function ServiceBooking() {
 
       <TablePagination
         component="div"
-        count={filteredBookings.length}
+        count={filteredProviders.length}
         page={page}
         onPageChange={(_, p) => setPage(p)}
         rowsPerPage={rowsPerPage}
@@ -174,68 +217,147 @@ export default function ServiceBooking() {
         }}
       />
 
-      {/* Details Modal */}
+      {/* Enhanced Details Modal */}
       <Modal open={openModal} onClose={handleCloseModal}>
-        <div className="absolute top-1/2 left-1/2 w-[500px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Booking Details</h2>
-            <IconButton onClick={handleCloseModal}>
+        <div className="absolute top-1/2 left-1/2 w-[550px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl overflow-hidden outline-none">
+          {/* Modal Header */}
+          <div className="bg-[#131927] p-6 flex justify-between items-center text-white">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <MdWork className="text-2xl" /> Provider Booking Details
+            </h2>
+            <IconButton
+              onClick={handleCloseModal}
+              sx={{
+                color: "white",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+              }}
+            >
               <IoClose />
             </IconButton>
           </div>
 
-          {selectedBooking && (
-            <div className="space-y-4">
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium text-gray-600">Service:</span>
-                <span className="font-semibold text-gray-800">
-                  {selectedBooking.serviceName}
-                </span>
-              </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium text-gray-600">Customer:</span>
-                <span className="text-gray-800">
-                  {selectedBooking.customerName}
-                </span>
-              </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium text-gray-600">Provider:</span>
-                <span className="text-gray-800">
-                  {selectedBooking.providerName}
-                </span>
-              </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium text-gray-600">Date:</span>
-                <span className="text-gray-800">
-                  {new Date(selectedBooking.date).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex justify-between border-b pb-2">
-                <span className="font-medium text-gray-600">Amount:</span>
-                <span className="text-gray-800">{selectedBooking.amount}</span>
-              </div>
-              <div className="flex justify-between items-center border-b pb-2">
-                <span className="font-medium text-gray-600">Status:</span>
-                <Chip
-                  label={selectedBooking.status}
-                  color={getStatusColor(selectedBooking.status)}
-                  size="small"
+          {selectedProvider && (
+            <div className="p-6 max-h-[80vh] overflow-y-auto">
+              {/* Provider Profile Card */}
+              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
+                <img
+                  src={`${imageUrl}${selectedProvider.profileImage}`}
+                  alt={selectedProvider.name}
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
                 />
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    {selectedProvider.name}
+                  </h3>
+                  <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
+                    <IoMailOutline />
+                    <span>{selectedProvider.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
+                    <IoLocationOutline />
+                    <span>
+                      {selectedProvider.city}, {selectedProvider.country}
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-auto">
+                  <Chip
+                    label={selectedProvider.status}
+                    color={getStatusColor(selectedProvider.status)}
+                    size="small"
+                  />
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-blue-50 p-4 rounded-xl flex flex-col items-center justify-center border border-blue-100">
+                  <span className="text-blue-600 text-xs font-bold uppercase tracking-wider mb-1">
+                    Total Bookings
+                  </span>
+                  <span className="text-2xl font-bold text-blue-900">
+                    {selectedProvider.totalBookings}
+                  </span>
+                  <div className="text-xs text-blue-400 mt-1 flex items-center gap-1">
+                    <FaCheckCircle className="text-green-500" />{" "}
+                    {selectedProvider.completedBookings} Completed
+                  </div>
+                </div>
+                <div className="bg-green-50 p-4 rounded-xl flex flex-col items-center justify-center border border-green-100">
+                  <span className="text-green-600 text-xs font-bold uppercase tracking-wider mb-1">
+                    Total Revenue
+                  </span>
+                  <span className="text-2xl font-bold text-green-900">
+                    ${selectedProvider.totalRevenue}
+                  </span>
+                  <div className="text-xs text-green-600 mt-1 flex gap-1">
+                    Profit: ${selectedProvider.profit}
+                  </div>
+                </div>
+              </div>
+
+              {/* Financial & Status Details */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-gray-700 border-b pb-2 mb-3">
+                  Additional Information
+                </h4>
+
+                <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FiAlertTriangle className="text-orange-500" />
+                    <span>Pending Payments</span>
+                  </div>
+                  <span className="font-bold text-gray-800">
+                    {selectedProvider.pendingPayments}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <IoMdCloseCircle className="text-red-500" />
+                    <span>Cancelled Bookings</span>
+                  </div>
+                  <span className="font-bold text-red-600">
+                    {selectedProvider.cancelledBookings}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <LuBanknote className="text-red-500" />
+                    <span>Refunded Bookings</span>
+                  </div>
+                  <span className="font-bold text-gray-800">
+                    {selectedProvider.refundedBookings}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <LuBanknote className="text-red-500" />
+                    <span>Total Refund Amount</span>
+                  </div>
+                  <span className="font-bold text-red-600">
+                    ${selectedProvider.totalRefundAmount}
+                  </span>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="flex justify-end mt-6">
+          {/* Footer */}
+          <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
             <Button
               variant="contained"
               onClick={handleCloseModal}
               sx={{
                 textTransform: "none",
-                bgcolor: "#1976d2",
-                "&:hover": { bgcolor: "#1565c0" },
+                bgcolor: "#131927",
+                boxShadow: "none",
+                "&:hover": { bgcolor: "#1565c0", boxShadow: "none" },
               }}
             >
-              Close
+              Close Details
             </Button>
           </div>
         </div>
