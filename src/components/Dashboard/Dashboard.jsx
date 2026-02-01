@@ -21,8 +21,8 @@ import {
 import EventsGrowthBarChart from "../UI/Chart/EventsGrowthBarChart";
 
 export default function Dashboard() {
-  const [userGrowthByYear, setUserGrowthByYear] = useState(2025);
-  const [eventsGrowthByYear, setEventsGrowthByYear] = useState(2025);
+  const [userGrowthByYear, setUserGrowthByYear] = useState(2026);
+  const [eventsGrowthByYear, setEventsGrowthByYear] = useState(2026);
 
   const {
     data: allStatsData,

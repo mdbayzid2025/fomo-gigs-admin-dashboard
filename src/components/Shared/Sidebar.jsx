@@ -26,7 +26,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="bg-[#131927] h-screen transition-all duration-300 w-20 lg:w-72 overflow-y-auto">
+    <div className="bg-[#131927] h-screen transition-all duration-300 overflow-y-auto">
       <div className="flex flex-col items-center gap-4 py-5 transition-all duration-300">
         <Link to="/">
           <img
