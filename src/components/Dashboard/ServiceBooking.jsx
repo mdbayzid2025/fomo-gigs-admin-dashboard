@@ -13,50 +13,12 @@ import {
   Modal,
   Button,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { MdVisibility } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
-
-// Mock Data
-const mockBookings = [
-  {
-    _id: "1",
-    serviceName: "Home Cleaning",
-    customerName: "John Doe",
-    providerName: "Clean Co.",
-    date: "2023-10-25",
-    status: "Pending",
-    amount: "$120",
-  },
-  {
-    _id: "2",
-    serviceName: "Plumbing Repair",
-    customerName: "Jane Smith",
-    providerName: "FixIt Fast",
-    date: "2023-10-24",
-    status: "Completed",
-    amount: "$85",
-  },
-  {
-    _id: "3",
-    serviceName: "Electrical Wiring",
-    customerName: "Alice Johnson",
-    providerName: "Sparky Services",
-    date: "2023-10-23",
-    status: "Cancelled",
-    amount: "$200",
-  },
-    {
-    _id: "4",
-    serviceName: "Gardening",
-    customerName: "Bob Brown",
-    providerName: "Green Thumb",
-    date: "2023-10-22",
-    status: "Completed",
-    amount: "$150",
-  },
-];
+import { useGetServiceBookingsQuery } from "../../Redux/api/serviceApi";
 
 export default function ServiceBooking() {
   const [searchText, setSearchText] = useState("");
@@ -65,10 +27,14 @@ export default function ServiceBooking() {
   const [openModal, setOpenModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const filteredBookings = mockBookings.filter(
+  const { data: bookingData, isLoading, isError } = useGetServiceBookingsQuery();
+  const bookings = bookingData?.data || [];
+  console.log("service bookings", bookings);
+
+  const filteredBookings = bookings.filter(
     (booking) =>
-      booking.serviceName.toLowerCase().includes(searchText.toLowerCase()) ||
-      booking.customerName.toLowerCase().includes(searchText.toLowerCase())
+      booking.serviceName?.toLowerCase().includes(searchText.toLowerCase()) ||
+      booking.customerName?.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const handleOpenModal = (booking) => {
@@ -93,6 +59,22 @@ export default function ServiceBooking() {
         return "default";
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center h-[92vh]">
+        <p className="text-red-500 text-lg">Failed to load bookings.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="px-10 py-8 bg-[#fbfbfb] h-[92vh]">

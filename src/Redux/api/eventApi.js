@@ -30,6 +30,20 @@ const eventApi = baseApi.injectEndpoints({
       },
       providesTags: ["events"],
     }),
+    getEventsSalesRevenue: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("gsd at", accessToken);
+        return {
+          url: "/events/dashboard/event-ticket-sales-stats",
+          method: "get",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["events"],
+    }),
     addCategory: builder.mutation({
       query: (categoryData) => {
         const accessToken = sessionStorage.getItem("accessToken");
@@ -81,6 +95,7 @@ const eventApi = baseApi.injectEndpoints({
 export const {
   useGetAllEventsQuery,
   useGetEventCategoriesQuery,
+  useGetEventsSalesRevenueQuery,
   useAddCategoryMutation,
   useDeleteCategoryMutation,
   useEditCategoryMutation,
