@@ -25,6 +25,8 @@ import ProtectedRoute from "../../utils/ProtectedRoute";
 import ServiceCategory from "../Dashboard/ServiceCategory";
 import EventCategory from "../Dashboard/EventCategory";
 import SystemHealth from "../Dashboard/SystemHealth";
+import ServiceBooking from "../Dashboard/ServiceBooking";
+import SalesRevenue from "../Dashboard/SalesRevenue";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +100,14 @@ const router = createBrowserRouter([
           {
             path: "report-management",
             element: <ReportManagement />,
+          },
+          {
+            path: "service-booking",
+            element: <ServiceBooking />,
+          },
+          {
+             path: "sales-revenue",
+             element: <SalesRevenue />,
           },
           {
             path: "system-health",

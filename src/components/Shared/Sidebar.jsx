@@ -12,6 +12,8 @@ import { IoDiamondOutline } from "react-icons/io5";
 import { TbMessageReport } from "react-icons/tb";
 import { GrSystem } from "react-icons/gr";
 
+import { LuCalendarCheck, LuDollarSign } from "react-icons/lu";
+
 import { Link, NavLink } from "react-router-dom";
 
 import logo from "../../../public/Images/logo.png";
@@ -24,7 +26,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="bg-[#131927] h-screen transition-all duration-300 w-20 lg:w-72 ">
+    <div className="bg-[#131927] h-screen transition-all duration-300 w-20 lg:w-72 overflow-y-auto">
       <div className="flex flex-col items-center gap-4 py-5 transition-all duration-300">
         <Link to="/">
           <img
@@ -60,6 +62,11 @@ export default function Sidebar() {
             label: "Service Category",
           },
           {
+            to: "/service-booking",
+            icon: <LuCalendarCheck className=" lg:text-2xl" />,
+            label: "Service Booking",
+          },
+          {
             to: "/event-category",
             icon: <LuNotepadText className=" lg:text-2xl" />,
             label: "Event Category",
@@ -68,6 +75,11 @@ export default function Sidebar() {
             to: "/event-management",
             icon: <FaRegCalendar className=" lg:text-2xl" />,
             label: "Event Management",
+          },
+          {
+            to: "/sales-revenue",
+            icon: <LuDollarSign className=" lg:text-2xl" />,
+            label: "Sales Revenue",
           },
           // {
           //   to: "/social-management",
@@ -110,8 +122,8 @@ export default function Sidebar() {
                 isActive
                   ? "bg-[#0095FF] text-[#fff]"
                   : selected === to
-                  ? "bg-[#0095FF] text-white"
-                  : "text-white"
+                    ? "bg-[#0095FF] text-white"
+                    : "text-white"
               }
               hover:bg-[#94d2ff] hover:text-[#000]`
             }

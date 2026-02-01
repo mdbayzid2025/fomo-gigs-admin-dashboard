@@ -16,6 +16,20 @@ const overviewApi = baseApi.injectEndpoints({
       },
       providesTags: ["services"],
     }),
+    getServiceBookings: builder.query({
+      query: () => {
+        const accessToken = sessionStorage.getItem("accessToken");
+        console.log("gsd at", accessToken);
+        return {
+          url: "/bookings/dashboard/service-provider",
+          method: "get",
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      providesTags: ["services"],
+    }),
     getServiceCategories: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
@@ -80,6 +94,7 @@ const overviewApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllServicesQuery,
+  useGetServiceBookingsQuery,
   useGetServiceCategoriesQuery,
   useAddCategoryMutation,
   useDeleteCategoryMutation,

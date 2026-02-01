@@ -50,7 +50,7 @@ export default function ServiceCategory() {
     refetch,
   } = useGetServiceCategoriesQuery();
   const categories = allCategoryData?.data || [];
-  console.log("categories data", categories);
+  console.log("service categories data", categories);
 
   const [addCategory, { isLoading: isLoadingAdd }] = useAddCategoryMutation();
   const [editCategory, { isLoading: isLoadingEdit }] =
