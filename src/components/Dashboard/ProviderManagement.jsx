@@ -21,12 +21,12 @@ import {
   useGetServiceProvidersQuery,
 } from "../../Redux/api/usersApi";
 import { useGetAllServicesQuery } from "../../Redux/api/serviceApi";
+import ManagePagination from "../Shared/ManagePagination";
+import SearchInput from "../Shared/SearchInput";
+import { getSearchParams } from "../../utils/getSearchParams";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 
 export default function ProviderManagement() {
-  const [searchText, setSearchText] = useState("");
-  const [filteredProviders, setFilteredProviders] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,47 +34,29 @@ export default function ProviderManagement() {
     data: allProviderData,
     isLoading: loadingProvidersData,
     isError: errorProvidersData,
-    refetch: refetchProviders,
+    refetch,
   } = useGetServiceProvidersQuery();
   const providersData = allProviderData?.data || [];
-  // console.log("providersData", providersData);
 
   const {
     data: allServicesData,
     isLoading: loadingServices,
     isError: servicesError,
   } = useGetAllServicesQuery();
+
+  const { page, limit, searchTerm } = getSearchParams()
+  const updateSearchParams = useUpdateSearchParams()
+
+  useEffect(() => {
+    refetch()
+  }, [page, limit, searchTerm]);
+
   const servicesData = allServicesData?.data || [];
-  // console.log("servicesData", servicesData);
 
   const [updateProviderStatus, { isLoading: updatingStatus }] =
     useChangeProviderStatusMutation();
 
-  // Initialize filteredProviders when providersData is loaded
-  useEffect(() => {
-    if (providersData && providersData.length > 0) {
-      setFilteredProviders(providersData);
-    }
-  }, [providersData]);
 
-  const handleSearch = (e) => {
-    const search = e.target.value;
-    setSearchText(search);
-
-    if (!providersData || providersData.length === 0) {
-      setFilteredProviders([]);
-      return;
-    }
-
-    const filtered = providersData.filter(
-      (provider) =>
-        provider.userId.name?.toLowerCase().includes(search.toLowerCase()) ||
-        provider.userId.email?.toLowerCase().includes(search.toLowerCase()) ||
-        provider.serviceCategory?.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredProviders(filtered);
-    setPage(0);
-  };
 
   const handleViewDetails = (provider) => {
     setSelectedProvider(provider);
@@ -84,15 +66,6 @@ export default function ProviderManagement() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProvider(null);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   if (loadingProvidersData || loadingServices) {
@@ -122,28 +95,11 @@ export default function ProviderManagement() {
       }}
     >
       {/* Search Bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "24px",
-        }}
-      >
-        <TextField
-          placeholder="Search by name, email or service..."
-          value={searchText}
-          onChange={handleSearch}
-          style={{ width: "325px" }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FaSearch />
-              </InputAdornment>
-            ),
-            style: {
-              borderRadius: "16px",
-            },
-          }}
+      <div className="flex justify-end mb-10">
+        <SearchInput
+          placeholder="Search by user Name or Email"
+          onSearch={(value) => updateSearchParams({ searchTerm: value })}
+          width={300}
         />
       </div>
 
@@ -191,7 +147,7 @@ export default function ProviderManagement() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredProviders.length === 0 ? (
+            {providersData.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -201,8 +157,7 @@ export default function ProviderManagement() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredProviders
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              providersData
                 .map((provider, index) => (
                   <TableRow
                     key={provider.email || index}
@@ -235,13 +190,13 @@ export default function ProviderManagement() {
                     </TableCell>
                     <TableCell style={{ color: "#666", textAlign: "center" }}>
                       {provider.serviceCategory &&
-                      servicesData.find(
-                        (service) => service._id === provider.serviceCategory
-                      )
+                        servicesData.find(
+                          (service) => service._id === provider.serviceCategory
+                        )
                         ? servicesData.find(
-                            (service) =>
-                              service._id === provider.serviceCategory
-                          ).serviceName
+                          (service) =>
+                            service._id === provider.serviceCategory
+                        ).serviceName
                         : "N/A"}
                     </TableCell>
                     <TableCell sx={{ textAlign: "center" }}>
@@ -252,15 +207,15 @@ export default function ProviderManagement() {
                             provider.status?.toLowerCase() === "approved"
                               ? "#1EC74F"
                               : provider.status?.toLowerCase() === "rejected"
-                              ? "#EE5252"
-                              : provider.status?.toLowerCase() === "pending"
-                              ? "#FFCC00"
-                              : "#9e9e9e",
+                                ? "#EE5252"
+                                : provider.status?.toLowerCase() === "pending"
+                                  ? "#FFCC00"
+                                  : "#9e9e9e",
                         }}
                       >
                         {provider.status
                           ? provider.status.charAt(0).toUpperCase() +
-                            provider.status.slice(1).toLowerCase()
+                          provider.status.slice(1).toLowerCase()
                           : "N/A"}
                       </span>
                     </TableCell>
@@ -279,8 +234,10 @@ export default function ProviderManagement() {
         </Table>
       </TableContainer>
 
+
       {/* Pagination Controls */}
-      <TablePagination
+      <ManagePagination meta={allProviderData?.meta} />
+      {/* <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={filteredProviders.length}
@@ -288,14 +245,14 @@ export default function ProviderManagement() {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
 
       {/* Provider Details Modal */}
       <ProviderDetailsModal
         selectedProvider={selectedProvider}
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}
-        refetchProviders={refetchProviders}
+        refetchProviders={refetch}
         updateProviderStatus={updateProviderStatus}
         updatingStatus={updatingStatus}
       />

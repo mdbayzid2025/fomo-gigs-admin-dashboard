@@ -5,7 +5,7 @@ const faqApi = baseApi.injectEndpoints({
     getFaqData: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        // console.log(accessToken);
+        
         return {
           url: "/faq",
           method: "get",
@@ -18,9 +18,7 @@ const faqApi = baseApi.injectEndpoints({
     }),
     createFAQ: builder.mutation({
       query: (payload) => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        // console.log(accessToken);
-        // console.log("faq", payload);
+        const accessToken = sessionStorage.getItem("accessToken");        
         return {
           url: "/faq",
           method: "post",
@@ -34,9 +32,7 @@ const faqApi = baseApi.injectEndpoints({
     }),
     updateFaq: builder.mutation({
       query: (payload) => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        // console.log(accessToken);
-        // console.log("faq", payload);
+        const accessToken = sessionStorage.getItem("accessToken");        
         return {
           url: `/faq/${payload.id}`,
           method: "patch",
@@ -51,8 +47,7 @@ const faqApi = baseApi.injectEndpoints({
     deleteFaq: builder.mutation({
       query: (id) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        // console.log(accessToken);
-        // console.log("delete faq", id);
+        
         return {
           url: `/faq/${id}`,
           method: "delete",

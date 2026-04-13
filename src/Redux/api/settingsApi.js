@@ -4,8 +4,7 @@ const settingsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     changePassword: builder.mutation({
       query: (data) => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        const accessToken = sessionStorage.getItem("accessToken");        
         return {
           url: "/auth/change-password",
           method: "post",
@@ -20,7 +19,6 @@ const settingsApi = baseApi.injectEndpoints({
     getAboutUs: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
         return {
           url: "/rules/about",
           method: "get",
@@ -34,8 +32,7 @@ const settingsApi = baseApi.injectEndpoints({
     addAboutUs: builder.mutation({
       query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
-        console.log("aboutUs", payload);
+        
         return {
           url: "/rules/about",
           method: "post",
@@ -50,7 +47,6 @@ const settingsApi = baseApi.injectEndpoints({
     getTermsAndConditions: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
         return {
           url: "/rules/terms-and-conditions",
           method: "get",
@@ -64,8 +60,7 @@ const settingsApi = baseApi.injectEndpoints({
     addTermsAndConditions: builder.mutation({
       query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
-        console.log("TermsAndConditions", payload);
+        
         return {
           url: "/rules/terms-and-conditions",
           method: "post",
@@ -80,7 +75,6 @@ const settingsApi = baseApi.injectEndpoints({
     getPrivacyPolicy: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
         return {
           url: "/rules/privacy-policy",
           method: "get",
@@ -94,8 +88,7 @@ const settingsApi = baseApi.injectEndpoints({
     addPrivacyPolicy: builder.mutation({
       query: (payload) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
-        console.log("PrivacyPolicy", payload);
+        
         return {
           url: "/rules/privacy-policy",
           method: "post",

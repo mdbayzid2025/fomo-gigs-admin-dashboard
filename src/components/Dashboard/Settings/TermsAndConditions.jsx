@@ -19,7 +19,6 @@ const TermsAndConditions = () => {
     error: fetchError,
     refetch,
   } = useGetTermsAndConditionsQuery();
-  console.log(getTermsData?.data.content);
 
   const [addTerms, { isLoading: isAdding }] =
     useAddTermsAndConditionsMutation();
@@ -39,7 +38,7 @@ const TermsAndConditions = () => {
 
       // Add a new Terms and Conditions if not existing
       const response = await addTerms(payload).unwrap();
-      console.log("add terms", response);
+      
       if (response.success) {
         toast.success("Added Terms and Conditions successfully!");
       }

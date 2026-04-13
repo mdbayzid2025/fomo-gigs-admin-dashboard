@@ -1,12 +1,11 @@
-import { Button, Chip, Modal, Stack, IconButton } from "@mui/material";
-import React from "react";
+import { Button, Chip, IconButton, Modal, Stack } from "@mui/material";
 import { AiOutlineDollar } from "react-icons/ai";
 import { CiMail } from "react-icons/ci";
 import { FaClock, FaRegUser } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
-import { getImageUrl } from "../../../utils/baseUrl";
 import { toast } from "sonner";
+import { getImageUrl } from "../../../utils/baseUrl";
 
 export default function ProviderDetailsModal({
   selectedProvider,
@@ -51,7 +50,6 @@ export default function ProviderDetailsModal({
         providerId: _id,
         status: newStatus,
       });
-      console.log("update api response", response);
       if (response.data.success) {
         toast.success("Provider status updated successfully");
         await refetchProviders();
@@ -112,7 +110,7 @@ export default function ProviderDetailsModal({
                 >
                   {status
                     ? status.charAt(0).toUpperCase() +
-                      status.slice(1).toLowerCase()
+                    status.slice(1).toLowerCase()
                     : ""}
                 </span>
               </div>

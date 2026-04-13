@@ -26,11 +26,15 @@ import {
 import Info from "../UI/Info";
 import { getImageUrl } from "../../utils/baseUrl";
 import { toast } from "sonner";
+import ManagePagination from "../Shared/ManagePagination";
+import { getSearchParams } from "../../utils/getSearchParams";
+import SearchInput from "../Shared/SearchInput";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 
 export default function UserManagement() {
   const [searchText, setSearchText] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -45,13 +49,16 @@ export default function UserManagement() {
     refetch,
   } = useGetAllUsersQuery();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
-  const userData = allUserData?.data?.data || [];
-  console.log("userdata", userData);
 
+  const userData = allUserData?.data || [];
+
+  const { page, limit, searchTerm } = getSearchParams()
+
+  const updateSearchParams = useUpdateSearchParams()
   /* ✅ Sync filtered users when API data loads */
   useEffect(() => {
-    setFilteredUsers(userData);
-  }, [userData]);
+    refetch()
+  }, [page, limit, searchTerm]);
 
   const handleSearchChange = (e) => {
     const search = e.target.value;
@@ -64,13 +71,6 @@ export default function UserManagement() {
     );
 
     setFilteredUsers(filtered);
-    setPage(0);
-  };
-
-  const handleChangePage = (_, newPage) => setPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
@@ -99,7 +99,7 @@ export default function UserManagement() {
 
     try {
       const deleteResponse = await deleteUser(userToDelete._id).unwrap();
-      console.log("deleteResponse", deleteResponse);
+      
       if (deleteResponse.success) {
         refetch();
         toast.success("User Deleted Succesfully");
@@ -132,25 +132,11 @@ export default function UserManagement() {
 
   return (
     <div className="px-10 py-8 bg-[#fbfbfb] h-[92vh]">
-      {/* Search */}
-      <div className="flex justify-end mb-4">
-        <TextField
-          sx={{
-            width: 300,
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "20px",
-            },
-          }}
+      <div className="flex justify-end mb-10">
+        <SearchInput
           placeholder="Search by user Name or Email"
-          value={searchText}
-          onChange={handleSearchChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FaSearch />
-              </InputAdornment>
-            ),
-          }}
+          onSearch={(value) => updateSearchParams({ searchTerm: value })}
+          width={300}
         />
       </div>
       {/* Table */}
@@ -172,8 +158,7 @@ export default function UserManagement() {
           </TableHead>
 
           <TableBody>
-            {filteredUsers
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {userData
               .map((user) => (
                 <TableRow key={user.userEmail}>
                   <TableCell align="center">{user.name}</TableCell>
@@ -193,13 +178,13 @@ export default function UserManagement() {
                           user.status?.toLowerCase() === "active"
                             ? "#1EC74F"
                             : user.status?.toLowerCase() === "inactive"
-                            ? "#EE5252"
-                            : "#FFCC00",
+                              ? "#EE5252"
+                              : "#FFCC00",
                       }}
                     >
                       {user.status
                         ? user.status.charAt(0).toUpperCase() +
-                          user.status.slice(1).toLowerCase()
+                        user.status.slice(1).toLowerCase()
                         : ""}
                     </span>
                   </TableCell>
@@ -214,8 +199,9 @@ export default function UserManagement() {
           </TableBody>
         </Table>
       </TableContainer>
+      <ManagePagination meta={allUserData?.meta} />
       {/* Pagination */}
-      <TablePagination
+      {/* <TablePagination
         component="div"
         count={filteredUsers.length}
         page={page}
@@ -223,7 +209,7 @@ export default function UserManagement() {
         rowsPerPageOptions={[5, 10, 25]}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
       {/* Modal */}
       <Modal open={openDetailsModal} onClose={handleCloseModal}>
         <div className="absolute top-1/2 left-1/2 w-[95%] max-w-[600px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-6 outline-none">
@@ -249,11 +235,10 @@ export default function UserManagement() {
 
                 <div className="flex gap-2 items-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${
-                      selectedUser.status === "ACTIVE"
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${selectedUser.status === "ACTIVE"
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                      }`}
                   >
                     {selectedUser.status.charAt(0).toUpperCase() +
                       selectedUser.status.slice(1).toLowerCase()}

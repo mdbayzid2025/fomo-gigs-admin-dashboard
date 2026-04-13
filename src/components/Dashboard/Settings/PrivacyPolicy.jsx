@@ -21,8 +21,6 @@ const PrivacyPolicy = () => {
     refetch,
   } = useGetPrivacyPolicyQuery();
 
-  console.log(getPrivacyPolicy?.data.content);
-
   const [addPrivacyPolicy, { isLoading: isAdding }] =
     useAddPrivacyPolicyMutation();
 
@@ -38,8 +36,7 @@ const PrivacyPolicy = () => {
       };
 
       // Add a new privacy policy if not existing
-      const response = await addPrivacyPolicy(payload).unwrap();
-      console.log("add privacy policy", response);
+      const response = await addPrivacyPolicy(payload).unwrap();      
       if (response.success) {
         toast.success("Privacy Policy added successfully!");
       }

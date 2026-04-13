@@ -22,11 +22,11 @@ import { LuCalendar, LuUser, LuMail, LuShoppingCart } from "react-icons/lu";
 import { IoAlertCircleOutline } from "react-icons/io5";
 
 import { useGetEventsSalesRevenueQuery } from "../../Redux/api/eventApi";
+import ManagePagination from "../Shared/ManagePagination";
 
 export default function SalesRevenue() {
   const [searchText, setSearchText] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
@@ -36,15 +36,7 @@ export default function SalesRevenue() {
     isError,
   } = useGetEventsSalesRevenueQuery();
   const salesRevenue = revenueData?.data;
-  console.log("sales revenue", salesRevenue);
-
-  const filteredRevenue =
-    salesRevenue?.filter(
-      (item) =>
-        item?.event?.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        item?.organizer?.name.toLowerCase().includes(searchText.toLowerCase()),
-    ) || [];
-
+  
   const handleOpenModal = (transaction) => {
     setSelectedTransaction(transaction);
     setOpenModal(true);
@@ -124,8 +116,7 @@ export default function SalesRevenue() {
           </TableHead>
 
           <TableBody>
-            {filteredRevenue
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {salesRevenue
               .map((row, index) => (
                 <TableRow key={row?.event?._id || index}>
                   <TableCell align="center">
@@ -169,17 +160,7 @@ export default function SalesRevenue() {
         </Table>
       </TableContainer>
 
-      <TablePagination
-        component="div"
-        count={filteredRevenue.length}
-        page={page}
-        onPageChange={(_, p) => setPage(p)}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(+e.target.value);
-          setPage(0);
-        }}
-      />
+      <ManagePagination meta={revenueData} />
 
       {/* Enhanced Details Modal */}
       <Modal open={openModal} onClose={handleCloseModal}>
@@ -286,26 +267,26 @@ export default function SalesRevenue() {
               {/* Cancelled Stats */}
               {(selectedTransaction?.totalCancelledOrders > 0 ||
                 selectedTransaction?.cancelledRevenue > 0) && (
-                <div className="mt-6 bg-red-50 rounded-xl p-4 border border-red-100">
-                  <div className="flex items-center gap-2 text-red-700 font-bold mb-3">
-                    <IoAlertCircleOutline />
-                    <span>Cancellations & Refunds</span>
+                  <div className="mt-6 bg-red-50 rounded-xl p-4 border border-red-100">
+                    <div className="flex items-center gap-2 text-red-700 font-bold mb-3">
+                      <IoAlertCircleOutline />
+                      <span>Cancellations & Refunds</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-red-600">Cancelled Orders</span>
+                      <span className="font-bold text-red-700">
+                        {selectedTransaction?.totalCancelledOrders}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm mt-1">
+                      <span className="text-red-600">Lost Revenue</span>
+                      <span className="font-bold text-red-700">
+                        -$
+                        {selectedTransaction?.cancelledRevenue?.toLocaleString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-red-600">Cancelled Orders</span>
-                    <span className="font-bold text-red-700">
-                      {selectedTransaction?.totalCancelledOrders}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm mt-1">
-                    <span className="text-red-600">Lost Revenue</span>
-                    <span className="font-bold text-red-700">
-                      -$
-                      {selectedTransaction?.cancelledRevenue?.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              )}
+                )}
             </div>
           )}
 

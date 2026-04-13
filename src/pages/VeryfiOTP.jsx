@@ -24,9 +24,9 @@ const VerifyOtp = () => {
     }
     try {
       const data = { oneTimeCode: otp, email: userEmail };
-      console.log("Verifying OTP:", data);
+      
       const response = await verifyOtp(data).unwrap();
-      console.log("otp verification response", response);
+      
       if (response.success === true) {
         localStorage.setItem("verifiedOtpToken", response?.data);
         toast.success("OTP verified successfully!");

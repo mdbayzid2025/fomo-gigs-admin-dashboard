@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 
 export default function UserGrowthBarChart({ selectedYear, growthData }) {
   const [chartData, setChartData] = useState([]);
-  // console.log(chartData);
-
-  // console.log("selectedYear", selectedYear);
-  // console.log("growthData", growthData);
 
   const monthNames = [
     "Jan",

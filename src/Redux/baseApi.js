@@ -14,5 +14,6 @@ export const baseApi = createApi({
     "interact",
     "faq",
     "events",
+    'coupons'
   ],
 });

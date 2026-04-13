@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { PiBellSimpleRingingBold } from "react-icons/pi";
+import { useState } from "react";
 
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, MenuItem, Button } from "@mui/material";
+import { Button, Menu, MenuItem } from "@mui/material";
 import { IoIosArrowDown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import profileImg from "../../../public/Images/profile.png";
 
 export default function Header() {
@@ -21,7 +20,6 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    console.log("User logged out");
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
     navigate("/sign-in");

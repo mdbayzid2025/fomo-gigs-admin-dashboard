@@ -18,7 +18,6 @@ import { useGetSystemHealthQuery } from "../../Redux/api/interactApi";
 const SystemHealth = () => {
   const { data: allSystemData, isLoading, isError } = useGetSystemHealthQuery();
   const systemData = allSystemData?.data;
-  console.log(systemData);
 
   const [memoryHistory, setMemoryHistory] = useState([]);
   const [loadHistory, setLoadHistory] = useState([]);

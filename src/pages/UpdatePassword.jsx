@@ -1,21 +1,19 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
 import {
   Button,
-  TextField,
-  Grid,
-  Typography,
-  Container,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
-  InputLabel,
   CircularProgress,
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Typography
 } from "@mui/material";
+import { useState } from "react";
 import { HiArrowLeft } from "react-icons/hi";
+import { IoIosEyeOff, IoMdEye } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import { IoMdEye } from "react-icons/io";
-import { IoIosEyeOff } from "react-icons/io";
 import { toast } from "sonner";
 import { useUpdatePasswordMutation } from "../Redux/api/authApi";
 
@@ -56,7 +54,6 @@ const UpdatePassword = () => {
 
     try {
       const response = await resetPassword(data).unwrap();
-      console.log("update pass response", response);
 
       if (response.success) {
         toast.success("Password Updated Successfully");

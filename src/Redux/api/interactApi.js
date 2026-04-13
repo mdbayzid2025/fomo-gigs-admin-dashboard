@@ -5,9 +5,8 @@ const interactApi = baseApi.injectEndpoints({
     getSupportData: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
         return {
-          url: "/support",
+          url: `/support${location?.search}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -18,9 +17,7 @@ const interactApi = baseApi.injectEndpoints({
     }),
     updateSupportStatus: builder.mutation({
       query: ({ id, status }) => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
-        console.log(id, status);
+        const accessToken = sessionStorage.getItem("accessToken");        
         return {
           url: `/support/${id}/status`,
           method: "PATCH",
@@ -35,12 +32,14 @@ const interactApi = baseApi.injectEndpoints({
     getReportsData: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
         return {
-          url: "/reports",
+          url: `/reports${location?.search}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
+          },
+          transformResponse: (response) => {            
+            return response?.data;
           },
         };
       },
@@ -49,8 +48,7 @@ const interactApi = baseApi.injectEndpoints({
     changeReportStatus: builder.mutation({
       query: ({ providerId, status }) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        // console.log("gsd at", accessToken);
-        console.log(providerId);
+
         return {
           url: `/reports/${providerId}/status`,
           method: "patch",
@@ -65,7 +63,6 @@ const interactApi = baseApi.injectEndpoints({
     getSystemHealth: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log(accessToken);
         return {
           url: "/system-health",
           method: "get",

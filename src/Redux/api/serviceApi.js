@@ -5,9 +5,9 @@ const overviewApi = baseApi.injectEndpoints({
     getAllServices: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+
         return {
-          url: "/service-categories",
+          url: `/service-categories${location?.search ? location?.search : ''}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -19,13 +19,14 @@ const overviewApi = baseApi.injectEndpoints({
     getServiceBookings: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
-          url: "/bookings/dashboard/service-provider",
+          url: `/bookings/dashboard/service-provider${location?.search}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
           },
+          transformResponse: (response) => response?.data,
         };
       },
       providesTags: ["services"],
@@ -33,9 +34,9 @@ const overviewApi = baseApi.injectEndpoints({
     getServiceCategories: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
-          url: "/service-categories",
+          url: `/service-categories${location?.search}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -47,8 +48,7 @@ const overviewApi = baseApi.injectEndpoints({
     addCategory: builder.mutation({
       query: (categoryData) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
-        console.log("cat data", categoryData);
+                
         return {
           url: "/service-categories",
           method: "post",
@@ -63,7 +63,7 @@ const overviewApi = baseApi.injectEndpoints({
     deleteCategory: builder.mutation({
       query: (id) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
           url: `/service-categories/${id}`,
           method: "delete",
@@ -77,7 +77,7 @@ const overviewApi = baseApi.injectEndpoints({
     editCategory: builder.mutation({
       query: ({ id, data }) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
           url: `/service-categories/${id}`,
           method: "patch",

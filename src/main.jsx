@@ -5,6 +5,8 @@ import router from "./components/Routes/Routes";
 import { Provider } from "react-redux";
 import { Toaster } from "sonner";
 import { store } from "./Redux/store";
+import React from "react";
+
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>

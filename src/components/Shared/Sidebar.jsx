@@ -17,6 +17,7 @@ import { LuCalendarCheck, LuDollarSign } from "react-icons/lu";
 import { Link, NavLink } from "react-router-dom";
 
 import logo from "../../../public/Images/logo.png";
+import { RiCoupon3Line } from "react-icons/ri";
 
 export default function Sidebar() {
   const [selected, setSelected] = useState(null);
@@ -77,6 +78,11 @@ export default function Sidebar() {
             label: "Event Management",
           },
           {
+            to: "/coupon-management",
+            icon: <RiCoupon3Line className=" lg:text-2xl" />,
+            label: "Coupon Management",
+          },
+          {
             to: "/sales-revenue",
             icon: <LuDollarSign className=" lg:text-2xl" />,
             label: "Sales Revenue",
@@ -118,12 +124,11 @@ export default function Sidebar() {
             onClick={() => handleSelect(to)}
             className={({ isActive }) =>
               `flex items-center font-medium gap-3 text-base p-2 rounded-md w-full
-              ${
-                isActive
-                  ? "bg-[#0095FF] text-[#fff]"
-                  : selected === to
-                    ? "bg-[#0095FF] text-white"
-                    : "text-white"
+              ${isActive
+                ? "bg-[#0095FF] text-[#fff]"
+                : selected === to
+                  ? "bg-[#0095FF] text-white"
+                  : "text-white"
               }
               hover:bg-[#94d2ff] hover:text-[#000]`
             }

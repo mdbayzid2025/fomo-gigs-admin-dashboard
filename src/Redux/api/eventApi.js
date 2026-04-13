@@ -5,9 +5,8 @@ const eventApi = baseApi.injectEndpoints({
     getAllEvents: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("events at", accessToken);
         return {
-          url: "/analytics/events",
+          url: `/analytics/events${location?.search ? location?.search : '?page=1&limit=10'}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -18,10 +17,9 @@ const eventApi = baseApi.injectEndpoints({
     }),
     getEventCategories: builder.query({
       query: () => {
-        const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        const accessToken = sessionStorage.getItem("accessToken");        
         return {
-          url: "/event-categories",
+          url: `/event-categories${location?.search}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -33,7 +31,7 @@ const eventApi = baseApi.injectEndpoints({
     getEventsSalesRevenue: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
           url: "/events/dashboard/event-ticket-sales-stats",
           method: "get",
@@ -47,8 +45,7 @@ const eventApi = baseApi.injectEndpoints({
     addCategory: builder.mutation({
       query: (categoryData) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
-        console.log("cat data", categoryData);
+        
         return {
           url: "/event-categories",
           method: "post",
@@ -63,7 +60,7 @@ const eventApi = baseApi.injectEndpoints({
     deleteCategory: builder.mutation({
       query: (id) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
           url: `/event-categories/${id}`,
           method: "delete",
@@ -77,7 +74,7 @@ const eventApi = baseApi.injectEndpoints({
     editCategory: builder.mutation({
       query: ({ id, data }) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+        
         return {
           url: `/event-categories/${id}`,
           method: "patch",

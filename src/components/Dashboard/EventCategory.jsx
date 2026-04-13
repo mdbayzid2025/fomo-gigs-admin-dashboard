@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -28,11 +28,12 @@ import {
   useEditCategoryMutation,
   useGetEventCategoriesQuery,
 } from "../../Redux/api/eventApi";
+import { getSearchParams } from "../../utils/getSearchParams";
+import ManagePagination from "../Shared/ManagePagination";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 
 export default function EventCategory() {
   const [searchText, setSearchText] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState(""); // 'add', 'edit', 'delete'
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -51,7 +52,22 @@ export default function EventCategory() {
     refetch,
   } = useGetEventCategoriesQuery();
   const categories = allCategoryData?.data || [];
-  console.log("categories data", categories);
+
+  const updateSearchparams = useUpdateSearchParams()
+  const { page, limit, searchTerm } = getSearchParams()
+
+  /* ✅ Sync filtered users when API data loads */
+  useEffect(() => {
+    refetch()
+  }, [page, limit, searchTerm]);
+
+  useEffect(() => {
+    updateSearchparams({ searchTerm: searchText })
+  }, [searchText]);
+
+
+
+
 
   const [addCategory, { isLoading: isLoadingAdd }] = useAddCategoryMutation();
   const [editCategory, { isLoading: isLoadingEdit }] =
@@ -130,7 +146,7 @@ export default function EventCategory() {
         }
 
         const response = await addCategory(formDataToSend).unwrap();
-        console.log("add response", response);
+
         if (response.success) {
           toast.success("Category added successfully!");
           refetch();
@@ -156,7 +172,6 @@ export default function EventCategory() {
           id: selectedCategory._id,
           data: formDataToSend,
         }).unwrap();
-        console.log("edit response", response);
         if (response.success) {
           toast.success("Category updated successfully!");
           refetch();
@@ -164,7 +179,7 @@ export default function EventCategory() {
         }
       } else if (modalMode === "delete") {
         const response = await deleteCategory(selectedCategory._id).unwrap();
-        console.log("delete response", response);
+
         if (response.success) {
           toast.success("Category deleted successfully!");
           refetch();
@@ -267,45 +282,33 @@ export default function EventCategory() {
           </TableHead>
 
           <TableBody>
-            {filteredCategories
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((category) => (
-                <TableRow key={category._id}>
-                  <TableCell align="center">{category.categoryName}</TableCell>
-                  <TableCell align="center">
-                    {new Date(category.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      onClick={() => handleOpenModal("edit", category)}
-                      color="primary"
-                    >
-                      <MdEdit />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleOpenModal("delete", category)}
-                      color="error"
-                    >
-                      <MdDelete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {categories?.map((category) => (
+              <TableRow key={category._id}>
+                <TableCell align="center">{category.categoryName}</TableCell>
+                <TableCell align="center">
+                  {new Date(category.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    onClick={() => handleOpenModal("edit", category)}
+                    color="primary"
+                  >
+                    <MdEdit />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleOpenModal("delete", category)}
+                    color="error"
+                  >
+                    <MdDelete />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <TablePagination
-        component="div"
-        count={filteredCategories.length}
-        page={page}
-        onPageChange={(_, p) => setPage(p)}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(+e.target.value);
-          setPage(0);
-        }}
-      />
+      <ManagePagination meta={allCategoryData?.meta} />
 
       {/* Add/Edit/Delete Modal */}
       <Modal open={openModal} onClose={handleCloseModal}>

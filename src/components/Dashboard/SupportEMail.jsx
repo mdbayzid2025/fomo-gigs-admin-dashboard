@@ -23,12 +23,13 @@ import {
 } from "../../Redux/api/interactApi";
 import dayjs from "dayjs";
 import { toast } from "sonner";
+import ManagePagination from "../Shared/ManagePagination";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
+import { getSearchParams } from "../../utils/getSearchParams";
 
 export default function SupportEmail() {
   const [searchText, setSearchText] = useState("");
-  const [filteredEmails, setFilteredEmails] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState(null);
   // const [replyText, setReplyText] = useState("");
@@ -39,41 +40,25 @@ export default function SupportEmail() {
     isError,
     refetch,
   } = useGetSupportDataQuery();
-  const support = supportData?.data.data || [];
-  console.log("support data", support);
+  const support = supportData?.data || [];
 
   const [changeStatus, { isLoading: changingStatus }] =
     useUpdateSupportStatusMutation();
 
+  const updateSearchParams = useUpdateSearchParams()
+  const { page, limit, searchTerm, sort } = getSearchParams()
   useEffect(() => {
-    if (support.length) {
-      setFilteredEmails(support);
-    }
-  }, [support]);
+    refetch()
+  }, [page, limit, searchTerm, sort])
 
-  const handleSearchChange = (e) => {
-    const search = e.target.value.toLowerCase();
-    setSearchText(search);
-    const filtered = support.filter(
-      (email) =>
-        email.name.toLowerCase().includes(search) ||
-        email.email.includes(search)
-    );
-    setFilteredEmails(filtered);
-    setPage(0);
-  };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handleChange = (e) => {
+    setSearchText(e.target.value);
+    updateSearchParams({ searchTerm: e.target.value });
   };
 
   const handleOpenModal = (email) => {
     setSelectedEmail(email);
-    // setReplyText("");
     setOpenDetailsModal(true);
   };
 
@@ -84,14 +69,14 @@ export default function SupportEmail() {
   };
 
   const handleStatusChange = async (requestId, newStatus) => {
-    console.log(requestId);
+    
     try {
       // Call the mutation with the report ID and new status
       const result = await changeStatus({
         id: requestId,
         status: newStatus,
       }).unwrap();
-      console.log(result);
+      
 
       if (result.success) {
         refetch();
@@ -103,29 +88,6 @@ export default function SupportEmail() {
       toast.error("Failed to update support status.");
     }
   };
-
-  // const handleSendReply = () => {
-  //   if (!replyText.trim()) {
-  //     toast.error("Please type a reply before sending.");
-  //     return;
-  //   }
-
-  //   const updatedEmails = filteredEmails.map((email) =>
-  //     email.phoneNumber === selectedEmail.phoneNumber
-  //       ? { ...email, status: "Solved" }
-  //       : email
-  //   );
-
-  //   setFilteredEmails(updatedEmails);
-
-  //   console.log("Sending reply:", replyText);
-  //   console.log("To:", selectedEmail.userName);
-
-  //   toast.success("Reply sent successfully!");
-
-  //   setReplyText("");
-  //   handleCloseModal();
-  // };
 
   if (isLoading || changingStatus) {
     return (
@@ -164,7 +126,7 @@ export default function SupportEmail() {
           }}
           placeholder="Search by User Name"
           value={searchText}
-          onChange={handleSearchChange}
+          onChange={handleChange}
           startAdornment={
             <InputAdornment position="start">
               <FaSearch />
@@ -235,8 +197,7 @@ export default function SupportEmail() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredEmails
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {support
               .map((email) => (
                 <TableRow key={email._id}>
                   <TableCell sx={{ textAlign: "center" }}>
@@ -263,7 +224,7 @@ export default function SupportEmail() {
                     >
                       {email?.status
                         ? email.status.charAt(0).toUpperCase() +
-                          email.status.slice(1).toLowerCase()
+                        email.status.slice(1).toLowerCase()
                         : ""}
                     </span>
                   </TableCell>
@@ -279,15 +240,7 @@ export default function SupportEmail() {
         </Table>
       </TableContainer>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredEmails.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <ManagePagination meta={supportData?.meta} />
 
       {/* Modal to display email details */}
       <Modal
@@ -401,15 +354,14 @@ export default function SupportEmail() {
                   <p>
                     Current Status:{" "}
                     <span
-                      className={`px-3 py-1.5 rounded-xl text-white font-semibold ${
-                        selectedEmail.status?.toLowerCase() === "resolved"
-                          ? "bg-[#2E8B57]"
-                          : "bg-red-500"
-                      }`}
+                      className={`px-3 py-1.5 rounded-xl text-white font-semibold ${selectedEmail.status?.toLowerCase() === "resolved"
+                        ? "bg-[#2E8B57]"
+                        : "bg-red-500"
+                        }`}
                     >
                       {selectedEmail?.status
                         ? selectedEmail.status.charAt(0).toUpperCase() +
-                          selectedEmail.status.slice(1).toLowerCase()
+                        selectedEmail.status.slice(1).toLowerCase()
                         : ""}
                     </span>
                   </p>

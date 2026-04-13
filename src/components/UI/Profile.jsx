@@ -1,15 +1,11 @@
-import React, { useState } from "react";
 import {
-  Avatar,
   Box,
   Button,
-  Container,
-  Grid,
   IconButton,
   InputAdornment,
-  TextField,
-  Typography,
+  TextField
 } from "@mui/material";
+import { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { RiLockPasswordFill } from "react-icons/ri";
 import profileImg from "../../../public/Images/profile.png";

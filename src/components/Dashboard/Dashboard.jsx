@@ -30,7 +30,6 @@ export default function Dashboard() {
     isError: statDataError,
   } = useGetStatsDataQuery();
   const statsData = allStatsData?.data;
-  // console.log("statsData", statsData);
 
   const {
     data: allUserGrowthData,
@@ -38,7 +37,6 @@ export default function Dashboard() {
     isError: growthDataError,
   } = useGetUserGrowthDataQuery(userGrowthByYear);
   const growthData = allUserGrowthData?.data;
-  // console.log("growthData", growthData);
 
   const {
     data: allEventsGrowthData,
@@ -46,7 +44,6 @@ export default function Dashboard() {
     isError: eventsDataError,
   } = useGetEventsGrowthDataQuery(eventsGrowthByYear);
   const eventsData = allEventsGrowthData?.data;
-  console.log("eventsData", eventsData);
 
   const handleUserGrowthYearChange = (event) => {
     setUserGrowthByYear(event.target.value);
@@ -54,8 +51,6 @@ export default function Dashboard() {
   const handleMatchesGrowthYearChange = (event) => {
     setEventsGrowthByYear(event.target.value);
   };
-
-  // console.log("yaaaaaaaaaaaaaaaaaar", year);
 
   if (loadingStatsData | loadingGrowthData | loadingEventsData) {
     return (

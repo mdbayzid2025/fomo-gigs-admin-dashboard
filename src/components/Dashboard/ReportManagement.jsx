@@ -24,11 +24,11 @@ import {
 } from "../../Redux/api/interactApi";
 import dayjs from "dayjs";
 import { toast } from "sonner";
+import ManagePagination from "../Shared/ManagePagination";
+import { getSearchParams } from "../../utils/getSearchParams";
 
 export default function ReportManagement() {
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
@@ -38,24 +38,17 @@ export default function ReportManagement() {
     isError: reportsError,
     refetch,
   } = useGetReportsDataQuery();
-  const reports = reportsData?.data.data || [];
-  console.log(reports);
+  const reports = reportsData?.data || [];
 
   const [changeReportStatus, { isLoading: isStatusChanging }] =
     useChangeReportStatusMutation();
 
+  const { page, limit, searchTerm } = getSearchParams()
+
+  /* ✅ Sync filtered users when API data loads */
   useEffect(() => {
-    if (reports.length) {
-      setFilteredPosts(reports);
-    }
-  }, [reports]);
-
-  const handleChangePage = (_event, newPage) => setPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+    refetch()
+  }, [page, limit, searchTerm]);
 
   const handleOpenModal = (post) => {
     setSelectedPost(post);
@@ -74,7 +67,6 @@ export default function ReportManagement() {
         providerId: postId,
         status: newStatus,
       }).unwrap();
-      console.log(result);
 
       if (result.success) {
         refetch();
@@ -92,8 +84,8 @@ export default function ReportManagement() {
     return status === "RESOLVED"
       ? "bg-green-500 text-white"
       : status === "PENDING"
-      ? "bg-yellow-500 text-black"
-      : "bg-gray-400 text-white";
+        ? "bg-yellow-500 text-black"
+        : "bg-gray-400 text-white";
   };
 
   if (reportsLoading || isStatusChanging) {
@@ -146,8 +138,7 @@ export default function ReportManagement() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredPosts
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {reports
               .map((post) => (
                 <TableRow key={post._id}>
                   <TableCell sx={{ textAlign: "center" }}>{post._id}</TableCell>
@@ -166,7 +157,7 @@ export default function ReportManagement() {
                     >
                       {post?.status
                         ? post.status.charAt(0).toUpperCase() +
-                          post.status.slice(1).toLowerCase()
+                        post.status.slice(1).toLowerCase()
                         : ""}
                     </span>
                   </TableCell>
@@ -181,16 +172,7 @@ export default function ReportManagement() {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredPosts.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <ManagePagination meta={reportsData?.meta} />
 
       {/* Modal for Viewing Reported Post Details */}
       <Modal

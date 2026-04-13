@@ -20,7 +20,7 @@ const authApi = baseApi.injectEndpoints({
     }),
     verifyOtp: build.mutation({
       query: (otpData) => {
-        console.log(otpData);
+        
         return {
           url: "/auth/verify-email",
           method: "POST",
@@ -32,7 +32,6 @@ const authApi = baseApi.injectEndpoints({
     updatePassword: build.mutation({
       query: (passwordData) => {
         const resettoken = localStorage.getItem("verifiedOtpToken");
-        console.log("Reset Password data:", passwordData);
         return {
           url: "/auth/reset-password",
           method: "POST",

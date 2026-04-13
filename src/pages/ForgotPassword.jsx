@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { TextField, Button, Grid, Typography, Container } from "@mui/material";
+import { Button, Container, Grid, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 import { HiArrowLeft } from "react-icons/hi";
 import { IoMailOpen } from "react-icons/io5";
 
@@ -19,10 +19,10 @@ const ForgotPassword = () => {
   const onFinish = async (e) => {
     e.preventDefault();
     const data = email;
-    console.log("Success:", data);
+
     try {
       const response = await forgetPassword(data).unwrap();
-      console.log("forgot password mail", response);
+
       if (response.success === true) {
         // localStorage.setItem("otpToken", response?.data?.forgetToken);
         localStorage.setItem("userEmail", email);

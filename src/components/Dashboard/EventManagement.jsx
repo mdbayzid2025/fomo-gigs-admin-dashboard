@@ -1,52 +1,59 @@
-import { useEffect, useState } from "react";
 import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
   InputAdornment,
   Modal,
-  Box,
-  TextField,
-  IconButton,
-  CircularProgress,
-  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
-import { useGetAllEventsQuery } from "../../Redux/api/eventApi";
 import { MdAccessTime, MdLocalActivity, MdLocationOn } from "react-icons/md";
+import { useGetAllEventsQuery } from "../../Redux/api/eventApi";
 import { getImageUrl } from "../../utils/baseUrl";
+import ManagePagination from "../Shared/ManagePagination";
+import { getSearchParams } from "../../utils/getSearchParams";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 
 export default function EventManagement() {
   const [searchText, setSearchText] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState([]);
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const imageUrl = getImageUrl();
+  const [searchInput, setSearchInput] = useState("");
 
-  const { data: allEvents, isLoading, isError } = useGetAllEventsQuery();
+  const { data: allEvents, isLoading, isError, refetch } = useGetAllEventsQuery();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const events = allEvents?.data || [];
-  console.log("events", events);
+
+  const updateSearchParams = useUpdateSearchParams()
+  const { page, limit, searchTerm, sort } = getSearchParams()
+  useEffect(() => {
+    refetch()
+  }, [page, limit, searchTerm, sort])
+
+
+  const handleChange = (e) => {
+    setSearchInput(e.target.value);
+    updateSearchParams({ searchTerm: e.target.value });
+  };
+
+
 
   const statusOptions = [
     "ALL",
     ...Array.from(new Set(events.map((event) => event.status).filter(Boolean))),
   ];
-  console.log(statusOptions);
 
-  useEffect(() => {
-    if (events.length) {
-      setFilteredEvents(events);
-    }
-  }, [events]);
 
   const applyFilters = (search, status) => {
     let filtered = events;
@@ -63,8 +70,6 @@ export default function EventManagement() {
     if (status !== "ALL") {
       filtered = filtered.filter((event) => event.status === status);
     }
-
-    setFilteredEvents(filtered);
     setPage(0);
   };
 
@@ -76,15 +81,13 @@ export default function EventManagement() {
 
   const handleStatusChange = (status) => {
     setStatusFilter(status);
-    applyFilters(searchText, status);
+    if (status === "ALL") {
+      updateSearchParams({ status: "" });
+    } else {
+      updateSearchParams({ status: status?.toUpperCase() });
+    }
   };
 
-  const handleChangePage = (_event, newPage) => setPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const handleOpenModal = (event) => {
     setSelectedEvent(event);
@@ -152,8 +155,8 @@ export default function EventManagement() {
             "& .MuiInputBase-root": { height: "100%" },
           }}
           placeholder="Search by Event ID or Title"
-          value={searchText}
-          onChange={handleSearchChange}
+          value={searchInput}
+          onChange={handleChange}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -224,55 +227,45 @@ export default function EventManagement() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredEvents
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((event) => (
-                <TableRow key={event._id}>
-                  <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
-                    {event.eventId}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
-                    {event.title}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
-                    {event.city}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    <span
-                      className={`px-3 py-2 rounded-lg text-xs font-semibold ${statusClass(
-                        event.status
-                      )}`}
-                    >
-                      {event.status?.charAt(0).toUpperCase() +
-                        event.status?.slice(1).toLowerCase()}
-                    </span>
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
-                    {formatDateTime(event.startAt)}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    <IconButton
-                      onClick={() => handleOpenModal(event)}
-                      size="small"
-                    >
-                      <FiEye className="text-lg text-[#131927]" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {events?.map((event) => (
+              <TableRow key={event._id}>
+                <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
+                  {event.eventId}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
+                  {event.title}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
+                  {event.city}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  <span
+                    className={`px-3 py-2 rounded-lg text-xs font-semibold ${statusClass(
+                      event.status
+                    )}`}
+                  >
+                    {event.status?.charAt(0).toUpperCase() +
+                      event.status?.slice(1).toLowerCase()}
+                  </span>
+                </TableCell>
+                <TableCell sx={{ textAlign: "center", fontSize: "13px" }}>
+                  {formatDateTime(event.startAt)}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  <IconButton
+                    onClick={() => handleOpenModal(event)}
+                    size="small"
+                  >
+                    <FiEye className="text-lg text-[#131927]" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredEvents.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <ManagePagination meta={allEvents?.meta} />
 
       {/* Event Details Modal */}
       <Modal

@@ -35,10 +35,8 @@ const SignIn = () => {
       password: form.get("password"),
     };
 
-    console.log("signIn Data", values);
     try {
       const res = await login(values).unwrap();
-      console.log("log in response", res);
       sessionStorage.setItem("accessToken", res?.data?.token);
 
       if (res.success) {

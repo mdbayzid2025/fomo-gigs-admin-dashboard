@@ -1,13 +1,15 @@
 import { baseApi } from "../baseApi";
 
+
+
 const overviewApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
     getAllUsers: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
         return {
-          url: "/users",
+          url: `/users${location?.search ? location?.search : '?page=1&limit=10'}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -20,7 +22,6 @@ const overviewApi = baseApi.injectEndpoints({
     deleteUser: builder.mutation({
       query: (id) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
         return {
           url: `/users/${id}`,
           method: "delete",
@@ -35,9 +36,9 @@ const overviewApi = baseApi.injectEndpoints({
     getServiceProviders: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
+
         return {
-          url: "/analytics/service-providers",
+          url: `/analytics/service-providers${location?.search ? location?.search : ''}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -49,8 +50,7 @@ const overviewApi = baseApi.injectEndpoints({
     changeProviderStatus: builder.mutation({
       query: ({ providerId, status }) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        // console.log("gsd at", accessToken);
-        console.log(providerId);
+
         return {
           url: `/analytics/service-provider/${providerId}/status`,
           method: "patch",
@@ -65,7 +65,6 @@ const overviewApi = baseApi.injectEndpoints({
     getProfile: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
         return {
           url: "/users/profile",
           method: "get",
@@ -79,8 +78,6 @@ const overviewApi = baseApi.injectEndpoints({
     editProfile: builder.mutation({
       query: (formData) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        console.log("gsd at", accessToken);
-        console.log("update data", formData);
         return {
           url: "/users",
           method: "patch",

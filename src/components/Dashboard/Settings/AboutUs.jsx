@@ -20,7 +20,6 @@ const AboutUs = () => {
     error: fetchError,
     refetch,
   } = useGetAboutUsQuery();
-  console.log(getAboutUsData?.data.content);
 
   const [addAboutUs, { isLoading: isAdding }] = useAddAboutUsMutation();
 
@@ -39,7 +38,7 @@ const AboutUs = () => {
 
       // Add a new about us if not existing
       const response = await addAboutUs(payload).unwrap();
-      console.log("add about us", response);
+      
       if (response.success) {
         toast.success("About Us added successfully!");
       }

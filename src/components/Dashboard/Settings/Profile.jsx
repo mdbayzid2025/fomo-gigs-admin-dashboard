@@ -100,7 +100,7 @@ export default function Profile() {
       }
 
       const res = await updateProfile(formData).unwrap();
-      console.log("update response", res);
+      
       if (res.success) {
         toast.success("Profile updated successfully");
         refetch();

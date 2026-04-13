@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -26,11 +26,13 @@ import { IoMdCloseCircle } from "react-icons/io";
 
 import { useGetServiceBookingsQuery } from "../../Redux/api/serviceApi";
 import { getImageUrl } from "../../utils/baseUrl";
+import ManagePagination from "../Shared/ManagePagination";
+import { getSearchParams } from "../../utils/getSearchParams";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 
 export default function ServiceBooking() {
   const [searchText, setSearchText] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
 
@@ -40,15 +42,21 @@ export default function ServiceBooking() {
     data: bookingData,
     isLoading,
     isError,
+    refetch
   } = useGetServiceBookingsQuery();
-  const providers = bookingData?.data || [];
-  console.log("service bookings", providers);
+  const providers = bookingData?.data || [];  
 
-  const filteredProviders = providers.filter(
-    (provider) =>
-      provider.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-      provider.email?.toLowerCase().includes(searchText.toLowerCase()),
-  );
+  const { page, limit, searchTerm } = getSearchParams()
+
+  const updateSearchParams = useUpdateSearchParams()
+  /* ✅ Sync filtered users when API data loads */
+  useEffect(() => {
+    refetch()
+  }, [page, limit, searchTerm]);
+
+  useEffect(() => {
+    updateSearchParams({ searchTerm: searchText })
+  }, [searchText])
 
   const handleOpenModal = (provider) => {
     setSelectedProvider(provider);
@@ -145,12 +153,11 @@ export default function ServiceBooking() {
           </TableHead>
 
           <TableBody>
-            {filteredProviders
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {providers
               .map((row, index) => (
                 <TableRow key={row.serviceProviderId || index}>
                   <TableCell align="center">
-                    <div className="flex items-center gap-2 justify-center">
+                    <div className="flex items-center gap-2 pl-10 ">
                       <img
                         src={`${imageUrl}${row.profileImage}`}
                         alt={row.name}
@@ -205,17 +212,7 @@ export default function ServiceBooking() {
         </Table>
       </TableContainer>
 
-      <TablePagination
-        component="div"
-        count={filteredProviders.length}
-        page={page}
-        onPageChange={(_, p) => setPage(p)}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(+e.target.value);
-          setPage(0);
-        }}
-      />
+      <ManagePagination meta={bookingData?.meta} />
 
       {/* Enhanced Details Modal */}
       <Modal open={openModal} onClose={handleCloseModal}>

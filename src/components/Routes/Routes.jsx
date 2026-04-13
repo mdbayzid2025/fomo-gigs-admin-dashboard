@@ -27,6 +27,9 @@ import EventCategory from "../Dashboard/EventCategory";
 import SystemHealth from "../Dashboard/SystemHealth";
 import ServiceBooking from "../Dashboard/ServiceBooking";
 import SalesRevenue from "../Dashboard/SalesRevenue";
+import CouponManage from "../Dashboard/Couponmanage";
+import React from "react";
+
 
 const router = createBrowserRouter([
   {
@@ -86,6 +89,10 @@ const router = createBrowserRouter([
             element: <EventManagement />,
           },
           {
+            path: "coupon-management",
+            element: <CouponManage />,
+          },
+          {
             path: "social-management",
             element: <SocialManagement />,
           },
@@ -106,8 +113,8 @@ const router = createBrowserRouter([
             element: <ServiceBooking />,
           },
           {
-             path: "sales-revenue",
-             element: <SalesRevenue />,
+            path: "sales-revenue",
+            element: <SalesRevenue />,
           },
           {
             path: "system-health",
