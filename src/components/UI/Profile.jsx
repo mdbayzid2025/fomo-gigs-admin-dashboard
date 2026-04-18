@@ -38,20 +38,20 @@ export default function Profile() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log({
-      name,
-      email,
-      dob,
-      userName,
-      password,
-      presentAddress,
-      permanentAddress,
-      postalCode,
-      city,
-      country,
-    });
-  };
+  // const handleSubmit = () => {
+  //   console.log({
+  //     name,
+  //     email,
+  //     dob,
+  //     userName,
+  //     password,
+  //     presentAddress,
+  //     permanentAddress,
+  //     postalCode,
+  //     city,
+  //     country,
+  //   });
+  // };
 
   return (
     <div className="flex mx-20 gap-10 mt-1 p-1 w-full">
@@ -197,7 +197,7 @@ export default function Profile() {
               width: "40%",
               float: "right",
             }}
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
           >
             Save & Update
           </Button>

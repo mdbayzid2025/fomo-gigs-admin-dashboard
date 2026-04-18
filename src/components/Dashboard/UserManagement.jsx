@@ -1,41 +1,34 @@
-import { useEffect, useState } from "react";
 import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
-  InputAdornment,
+  Button,
+  CircularProgress,
   IconButton,
   Modal,
-  TextField,
-  CircularProgress,
-  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from "@mui/material";
-import { FaSearch } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { FiEye } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 
+import { toast } from "sonner";
 import {
   useDeleteUserMutation,
   useGetAllUsersQuery,
 } from "../../Redux/api/usersApi";
-import Info from "../UI/Info";
 import { getImageUrl } from "../../utils/baseUrl";
-import { toast } from "sonner";
-import ManagePagination from "../Shared/ManagePagination";
 import { getSearchParams } from "../../utils/getSearchParams";
-import SearchInput from "../Shared/SearchInput";
 import { useUpdateSearchParams } from "../../utils/updateSearchParams";
+import ManagePagination from "../Shared/ManagePagination";
+import SearchInput from "../Shared/SearchInput";
+import Info from "../UI/Info";
 
 export default function UserManagement() {
-  const [searchText, setSearchText] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  // const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -60,19 +53,6 @@ export default function UserManagement() {
     refetch()
   }, [page, limit, searchTerm]);
 
-  const handleSearchChange = (e) => {
-    const search = e.target.value;
-    setSearchText(search);
-
-    const filtered = userData.filter(
-      (user) =>
-        user.name?.toLowerCase().includes(search.toLowerCase()) ||
-        user.email?.toLowerCase().includes(search.toLowerCase())
-    );
-
-    setFilteredUsers(filtered);
-    setPage(0);
-  };
 
   const handleOpenModal = (user) => {
     setSelectedUser(user);
@@ -200,16 +180,7 @@ export default function UserManagement() {
         </Table>
       </TableContainer>
       <ManagePagination meta={allUserData?.meta} />
-      {/* Pagination */}
-      {/* <TablePagination
-        component="div"
-        count={filteredUsers.length}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      /> */}
+   
       {/* Modal */}
       <Modal open={openDetailsModal} onClose={handleCloseModal}>
         <div className="absolute top-1/2 left-1/2 w-[95%] max-w-[600px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-6 outline-none">

@@ -12,6 +12,7 @@ export const baseApi = createApi({
     "services",
     "settings",
     "interact",
+    "packages",
     "faq",
     "events",
     'coupons'

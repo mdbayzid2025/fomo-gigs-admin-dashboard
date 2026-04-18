@@ -4,12 +4,16 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import profileImg from "../../../public/Images/profile.png";
+import { useGetProfileQuery } from "../../Redux/api/usersApi";
+import { getImageUrl } from "../../utils/baseUrl";
 
 export default function Header() {
   const [dropdownMenu, setDropdownMenu] = useState(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-
+const {data: profileData} = useGetProfileQuery({});
+  console.log("profileData", profileData);
+  
   const handleProfileClick = (event) => {
     setDropdownMenu(event.currentTarget);
     setOpen(true);
@@ -47,11 +51,11 @@ export default function Header() {
         >
           <div className="flex items-center gap-2 bg-[#EFEFEF] p-1 rounded-lg">
             <img
-              src={profileImg}
+              src={profileData?.data?.profileImage ? getImageUrl() + profileData?.data?.profileImage : profileImg}
               alt=""
               className="size-8 rounded-full border border-white"
             />
-            <p className="text-black font-medium">User Name</p>
+            <p className="text-black font-medium">{profileData?.data?.name || "User Name"}</p>
             <IoIosArrowDown fontSize={20} color="black" />
           </div>
         </Button>

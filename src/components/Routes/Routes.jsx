@@ -29,6 +29,7 @@ import ServiceBooking from "../Dashboard/ServiceBooking";
 import SalesRevenue from "../Dashboard/SalesRevenue";
 import CouponManage from "../Dashboard/Couponmanage";
 import React from "react";
+import PackageManage from "../Dashboard/PackageManage";
 
 
 const router = createBrowserRouter([
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
           {
             path: "event-management",
             element: <EventManagement />,
+          },
+          {
+            path: "packages-management",
+            element: <PackageManage />,
           },
           {
             path: "coupon-management",

@@ -36,10 +36,10 @@ export default function EventManagement() {
   const events = allEvents?.data || [];
 
   const updateSearchParams = useUpdateSearchParams()
-  const { page, limit, searchTerm, sort } = getSearchParams()
+  const { page, limit, searchTerm, status } = getSearchParams()
   useEffect(() => {
     refetch()
-  }, [page, limit, searchTerm, sort])
+  }, [page, limit, searchTerm, status])
 
 
   const handleChange = (e) => {

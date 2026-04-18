@@ -1,23 +1,18 @@
 import { useState } from "react";
 
-import { MdOutlineDashboard } from "react-icons/md";
-import { IoSettingsOutline } from "react-icons/io5";
-import { FaStore } from "react-icons/fa";
-import { FaRegUser } from "react-icons/fa";
-import { LuNotepadText } from "react-icons/lu";
-import { FaRegCalendar } from "react-icons/fa";
-import { HiOutlinePresentationChartLine } from "react-icons/hi";
-import { LuBookText } from "react-icons/lu";
-import { IoDiamondOutline } from "react-icons/io5";
-import { TbMessageReport } from "react-icons/tb";
+import { FaRegCalendar, FaRegUser, FaStore } from "react-icons/fa";
 import { GrSystem } from "react-icons/gr";
+import { IoSettingsOutline } from "react-icons/io5";
+import { LuBookText, LuNotepadText } from "react-icons/lu";
+import { MdOutlineDashboard } from "react-icons/md";
+import { TbMessageReport } from "react-icons/tb";
 
 import { LuCalendarCheck, LuDollarSign } from "react-icons/lu";
 
 import { Link, NavLink } from "react-router-dom";
 
-import logo from "../../../public/Images/logo.png";
 import { RiCoupon3Line } from "react-icons/ri";
+import logo from "../../../public/Images/logo.png";
 
 export default function Sidebar() {
   const [selected, setSelected] = useState(null);
@@ -81,6 +76,11 @@ export default function Sidebar() {
             to: "/coupon-management",
             icon: <RiCoupon3Line className=" lg:text-2xl" />,
             label: "Coupon Management",
+          },
+          {
+            to: "/packages-management",
+            icon: <RiCoupon3Line className=" lg:text-2xl" />,
+            label: "Packages Management",
           },
           {
             to: "/sales-revenue",
