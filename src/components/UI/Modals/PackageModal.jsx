@@ -120,46 +120,54 @@ const PackageModal = ({
                                 />
                             </div>
 
-                            <div className="flex gap-3">
-                                <TextField
-                                    fullWidth
-                                    label="Google Product ID"
-                                    name="googleProductId"
-                                    value={formData.googleProductId}
-                                    onChange={handleInputChange}
-                                />
-                                <TextField
-                                    fullWidth
-                                    label="Apple Product ID"
-                                    name="appleProductId"
-                                    value={formData.appleProductId}
-                                    onChange={handleInputChange}
-                                />
-                            </div>                            
-                                <TextField
-                                    fullWidth
-                                    select
-                                    label="Provider"
-                                    name="provider"
-                                    value={formData.provider}
-                                    onChange={handleInputChange}
-                                    sx={{ mb: 2 }}
-                                >
-                                    <MenuItem value="GOOGLE">GOOGLE</MenuItem>
-                                    <MenuItem value="APPLE">APPLE</MenuItem>
-                                    <MenuItem value="BOTH">BOTH</MenuItem>
-                                </TextField>
+                            <TextField
+                                fullWidth
+                                select
+                                label="Provider"
+                                name="provider"
+                                value={formData.provider}
+                                onChange={handleInputChange}
+                                sx={{ mb: 2 }}
+                            >
+                                <MenuItem value="GOOGLE">GOOGLE</MenuItem>
+                                <MenuItem value="APPLE">APPLE</MenuItem>
+                                <MenuItem value="BOTH">BOTH</MenuItem>
+                            </TextField>
 
-                                <TextField
-                                    fullWidth
-                                    label="Description"
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleInputChange}
-                                    multiline
-                                    rows={3}
-                                    sx={{ mb: 2 }}
-                                />                            
+                            <div className="flex gap-3">
+                                {/* GOOGLE */}
+                                {(formData.provider === "GOOGLE" || formData.provider === "BOTH") && (
+                                    <TextField
+                                        fullWidth
+                                        label="Google Product ID"
+                                        name="googleProductId"
+                                        value={formData.googleProductId}
+                                        onChange={handleInputChange}
+                                    />
+                                )}
+
+                                {/* APPLE */}
+                                {(formData.provider === "APPLE" || formData.provider === "BOTH") && (
+                                    <TextField
+                                        fullWidth
+                                        label="Apple Product ID"
+                                        name="appleProductId"
+                                        value={formData.appleProductId}
+                                        onChange={handleInputChange}
+                                    />
+                                )}
+                            </div>
+
+                            <TextField
+                                fullWidth
+                                label="Description"
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                multiline
+                                rows={3}
+                                sx={{ mb: 2 }}
+                            />
 
                             {/* Features Section */}
                             <div>
