@@ -6,7 +6,7 @@ const couponApi = baseApi.injectEndpoints({
             query: () => {
                 const accessToken = sessionStorage.getItem("accessToken");
                 return {
-                    url: "/coupons",
+                    url: `/coupons${location?.search}`,
                     method: "get",
                     headers: {
                         authorization: `Bearer ${accessToken}`,

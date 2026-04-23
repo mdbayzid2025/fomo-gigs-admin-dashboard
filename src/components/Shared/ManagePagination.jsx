@@ -8,7 +8,7 @@ const ManagePagination = ({ meta }) => {
     const location = useLocation();
 
     const currentPage = Number(meta?.page);
-    const totalPage = Number(meta?.totalPage || meta?.totalPages);
+    const totalPage = Number(meta?.totalPage || meta?.totalPages || meta?.total);
     const limit = Number(meta?.limit) || 8;
     const totalItems = Number(meta?.total) || totalPage * limit;
 

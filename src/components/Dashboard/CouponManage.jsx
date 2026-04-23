@@ -29,6 +29,7 @@ import CouponModal from "../UI/Modals/CouponModal";
 import ManagePagination from "../Shared/ManagePagination";
 import { getSearchParams } from "../../utils/getSearchParams";
 import { useUpdateSearchParams } from "../../utils/updateSearchParams";
+import { ErrorResponseHandler } from "../../utils/ErrorResponseHandler";
 
 export default function CouponManage() {
     const [searchText, setSearchText] = useState("");
@@ -63,10 +64,11 @@ export default function CouponManage() {
     const [deleteCoupon, { isLoading: isLoadingDelete }] =
         useDeleteCouponMutation();
 
+        console.log("allCouponData", allCouponData);
+        
+
 
     const { page, limit, searchTerm } = getSearchParams()
-
-    const updateSearchParams = useUpdateSearchParams()
 
     useEffect(() => {
         refetch()
@@ -120,10 +122,11 @@ export default function CouponManage() {
                     `Coupon ${!coupon.isActive ? "activated" : "deactivated"} successfully!`
                 );
                 refetch();
+            } else {
+                ErrorResponseHandler(response, "coupon");
             }
         } catch (error) {
-            console.error("Error:", error);
-            toast.error(error?.data?.message || "Failed to update coupon status.");
+            ErrorResponseHandler(error, 'coupon')            
         }
     };
 
@@ -196,13 +199,8 @@ export default function CouponManage() {
                     handleCloseModal();
                 }
             }
-        } catch (error) {
-            console.error("Error:", error);
-            const errorMessage =
-                error?.data?.message ||
-                error?.message ||
-                "Operation failed. Please try again.";
-            toast.error(errorMessage);
+        } catch (error) {            
+              ErrorResponseHandler(error?.data, "coupon");
         }
     };
 

@@ -30,15 +30,16 @@ export default function EventManagement() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const imageUrl = getImageUrl();
   const [searchInput, setSearchInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { data: allEvents, isLoading, isError, refetch } = useGetAllEventsQuery();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const events = allEvents?.data || [];
-
+  
   const updateSearchParams = useUpdateSearchParams()
   const { page, limit, searchTerm, status } = getSearchParams()
-  useEffect(() => {
-    refetch()
+  useEffect(() => {    
+    refetch()    
   }, [page, limit, searchTerm, status])
 
 
@@ -46,13 +47,6 @@ export default function EventManagement() {
     setSearchInput(e.target.value);
     updateSearchParams({ searchTerm: e.target.value });
   };
-
-
-
-  const statusOptions = [
-    "ALL",
-    ...Array.from(new Set(events.map((event) => event.status).filter(Boolean))),
-  ];
 
 
   const applyFilters = (search, status) => {
@@ -124,7 +118,7 @@ export default function EventManagement() {
     return `$${parseFloat(price).toFixed(2)}`;
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-[92vh]">
         <CircularProgress />
@@ -167,7 +161,7 @@ export default function EventManagement() {
         />
         {/* Status Filters (from real data) */}
         <div className="flex gap-3 flex-wrap">
-          {statusOptions.map((status) => (
+          {["ALL", "UPCOMING", "ONGOING", "ENDED", "CANCELLED"].map((status) => (
             <Button
               key={status}
               onClick={() => handleStatusChange(status)}

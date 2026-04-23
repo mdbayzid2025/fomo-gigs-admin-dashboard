@@ -2,21 +2,15 @@ import {
   Button,
   CircularProgress,
   IconButton,
-  InputAdornment,
-  Modal,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
-  TableRow,
-  TextField
+  TableRow
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
-import { MdAdd, MdDelete, MdEdit, MdImage } from "react-icons/md";
+import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
 import { toast } from "sonner";
 import {
   useAddCategoryMutation,
@@ -25,11 +19,11 @@ import {
   useGetServiceCategoriesQuery,
 } from "../../Redux/api/serviceApi";
 import { getImageUrl } from "../../utils/baseUrl";
-import ServiceCategoryModal from "../UI/Modals/ServiceCategoryModal";
+import { getSearchParams } from "../../utils/getSearchParams";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 import ManagePagination from "../Shared/ManagePagination";
 import SearchInput from "../Shared/SearchInput";
-import { useUpdateSearchParams } from "../../utils/updateSearchParams";
-import { getSearchParams } from "../../utils/getSearchParams";
+import ServiceCategoryModal from "../UI/Modals/ServiceCategoryModal";
 
 export default function ServiceCategory() {
 
@@ -51,6 +45,9 @@ export default function ServiceCategory() {
     refetch,
   } = useGetServiceCategoriesQuery();
   const categories = allCategoryData?.data || [];
+
+  console.log("formData", formData);
+
 
   const [addCategory, { isLoading: isLoadingAdd }] = useAddCategoryMutation();
   const [editCategory, { isLoading: isLoadingEdit }] =
@@ -132,7 +129,7 @@ export default function ServiceCategory() {
           formDataToSend.append("image", imageFile);
         }
 
-        const response = await addCategory(formDataToSend).unwrap();        
+        const response = await addCategory(formDataToSend).unwrap();
         if (response.success) {
           toast.success("Category added successfully!");
           refetch();
@@ -146,10 +143,10 @@ export default function ServiceCategory() {
         }
 
         const formDataToSend = new FormData();
-        // formDataToSend.append(
-        //   "data",
-        //   JSON.stringify({ serviceName: formData.serviceName })
-        // );
+        formDataToSend.append(
+          "data",
+          JSON.stringify({ serviceName: formData.serviceName })
+        );
         if (imageFile) {
           formDataToSend.append("image", imageFile);
         }
@@ -158,7 +155,7 @@ export default function ServiceCategory() {
           id: selectedCategory._id,
           data: formDataToSend,
         }).unwrap();
-        
+
         if (response.success) {
           toast.success("Category updated successfully!");
           refetch();
@@ -166,7 +163,7 @@ export default function ServiceCategory() {
         }
       } else if (modalMode === "delete") {
         const response = await deleteCategory(selectedCategory._id).unwrap();
-        
+
         if (response.success) {
           toast.success("Category deleted successfully!");
           refetch();
@@ -235,8 +232,7 @@ export default function ServiceCategory() {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
-              <TableCell
-                align="center"
+              <TableCell                
                 sx={{
                   fontWeight: "600",
                 }}
@@ -266,7 +262,16 @@ export default function ServiceCategory() {
             {categories
               .map((category) => (
                 <TableRow key={category._id}>
-                  <TableCell align="center">{category.serviceName}</TableCell>
+                  <TableCell >
+                    <div className="flex items-center gap-2 pl-5">
+                      <img
+                        src={`${imageUrl}${category.image}`}
+                        alt={category.serviceName}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <span>{category.serviceName}</span>
+                    </div>
+                  </TableCell>
                   <TableCell align="center">
                     {new Date(category.createdAt).toLocaleDateString()}
                   </TableCell>
@@ -308,6 +313,8 @@ export default function ServiceCategory() {
         isLoadingEdit={isLoadingEdit}
         isLoadingDelete={isLoadingDelete}
         imageUrl={imageUrl}
+        imageFile={imageFile}
+        imagePreview={imagePreview}
         isSubmitting={isSubmitting}
       />
     </div>

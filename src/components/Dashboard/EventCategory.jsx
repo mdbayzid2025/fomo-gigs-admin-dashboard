@@ -1,36 +1,33 @@
-import { useEffect, useState } from "react";
 import {
-  TableContainer,
+  Button,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Modal,
   Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
-  TextField,
-  InputAdornment,
-  IconButton,
-  Modal,
-  CircularProgress,
-  Button,
-  Snackbar,
-  Alert,
+  TextField
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { MdEdit, MdDelete, MdAdd, MdImage } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { MdAdd, MdDelete, MdEdit, MdImage } from "react-icons/md";
 
-import { getImageUrl } from "../../utils/baseUrl";
 import { toast } from "sonner";
 import {
-  useAddCategoryMutation,
+  useAddEventCategoryMutation,
   useDeleteCategoryMutation,
-  useEditCategoryMutation,
-  useGetEventCategoriesQuery,
+  useEditEventCategoryMutation,
+  useGetEventCategoriesQuery
 } from "../../Redux/api/eventApi";
+import { getImageUrl } from "../../utils/baseUrl";
 import { getSearchParams } from "../../utils/getSearchParams";
-import ManagePagination from "../Shared/ManagePagination";
 import { useUpdateSearchParams } from "../../utils/updateSearchParams";
+import ManagePagination from "../Shared/ManagePagination";
 
 export default function EventCategory() {
   const [searchText, setSearchText] = useState("");
@@ -69,9 +66,9 @@ export default function EventCategory() {
 
 
 
-  const [addCategory, { isLoading: isLoadingAdd }] = useAddCategoryMutation();
-  const [editCategory, { isLoading: isLoadingEdit }] =
-    useEditCategoryMutation();
+  const [addEventCategory, { isLoading: isLoadingAdd }] = useAddEventCategoryMutation();
+  const [editEventCategory, { isLoading: isLoadingEdit }] =
+    useEditEventCategoryMutation();
   const [deleteCategory, { isLoading: isLoadingDelete }] =
     useDeleteCategoryMutation();
 
@@ -145,7 +142,7 @@ export default function EventCategory() {
           formDataToSend.append("image", imageFile);
         }
 
-        const response = await addCategory(formDataToSend).unwrap();
+        const response = await addEventCategory(formDataToSend).unwrap();
 
         if (response.success) {
           toast.success("Category added successfully!");
@@ -160,15 +157,15 @@ export default function EventCategory() {
         }
 
         const formDataToSend = new FormData();
-        // formDataToSend.append(
-        //   "data",
-        //   JSON.stringify({ categoryName: formData.categoryName })
-        // );
+        formDataToSend.append(
+          "data",
+          JSON.stringify({ categoryName: formData.categoryName })
+        );
         if (imageFile) {
           formDataToSend.append("image", imageFile);
         }
 
-        const response = await editCategory({
+        const response = await editEventCategory({
           id: selectedCategory._id,
           data: formDataToSend,
         }).unwrap();
@@ -254,8 +251,7 @@ export default function EventCategory() {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
-              <TableCell
-                align="center"
+              <TableCell                
                 sx={{
                   fontWeight: "600",
                 }}
@@ -284,7 +280,16 @@ export default function EventCategory() {
           <TableBody>
             {categories?.map((category) => (
               <TableRow key={category._id}>
-                <TableCell align="center">{category.categoryName}</TableCell>
+                <TableCell >
+                  <div className="flex items-center  gap-2  pl-5">
+                    <img
+                      src={`${imageUrl}${category.image}`}
+                      alt={category.categoryName}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <span>{category.categoryName}</span>
+                  </div>
+                </TableCell>                
                 <TableCell align="center">
                   {new Date(category.createdAt).toLocaleDateString()}
                 </TableCell>

@@ -28,13 +28,15 @@ import SearchInput from "../Shared/SearchInput";
 import Info from "../UI/Info";
 
 export default function UserManagement() {
-  
+
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const imageUrl = getImageUrl();
 
+
+  
   const {
     data: allUserData,
     isLoading,
@@ -42,7 +44,8 @@ export default function UserManagement() {
     refetch,
   } = useGetAllUsersQuery();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
-
+  
+  console.log("name", allUserData);
   const userData = allUserData?.data || [];
 
   const { page, limit, searchTerm } = getSearchParams()
@@ -79,7 +82,7 @@ export default function UserManagement() {
 
     try {
       const deleteResponse = await deleteUser(userToDelete._id).unwrap();
-      
+
       if (deleteResponse.success) {
         refetch();
         toast.success("User Deleted Succesfully");
@@ -141,7 +144,16 @@ export default function UserManagement() {
             {userData
               .map((user) => (
                 <TableRow key={user.userEmail}>
-                  <TableCell align="center">{user.name}</TableCell>
+                  <TableCell >
+                    <div className="flex items-center gap-2 pl-5">
+                      <img
+                        src={`${imageUrl}${user.profileImage}`}
+                        alt={user.name}
+                        className="w-10 h-10 rounded-md object-cover"
+                      />
+                      <span>{user.name}</span>
+                    </div>
+                  </TableCell>
                   <TableCell align="center">{user.email}</TableCell>
                   <TableCell align="center">
                     {user.countryName || "N/A"}
@@ -180,7 +192,7 @@ export default function UserManagement() {
         </Table>
       </TableContainer>
       <ManagePagination meta={allUserData?.meta} />
-   
+
       {/* Modal */}
       <Modal open={openDetailsModal} onClose={handleCloseModal}>
         <div className="absolute top-1/2 left-1/2 w-[95%] max-w-[600px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-6 outline-none">

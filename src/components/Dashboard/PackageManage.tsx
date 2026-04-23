@@ -1,14 +1,14 @@
 
-import PackageModal from "../UI/Modals/PackageModal";
-import ManagePagination from "../Shared/ManagePagination";
-import { getSearchParams } from "../../utils/getSearchParams";
-import { useUpdateSearchParams } from "../../utils/updateSearchParams";
-import { useAddPackageMutation, useDeletePackageMutation, useEditPackageMutation, useGetPackagesQuery, useToggleStatusMutation } from "../../Redux/api/packageApi";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Button, Chip, CircularProgress, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
 import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
 import { TbToggleLeft, TbToggleRight } from "react-icons/tb";
+import { toast } from "sonner";
+import { useAddPackageMutation, useDeletePackageMutation, useEditPackageMutation, useGetPackagesQuery, useToggleStatusMutation } from "../../Redux/api/packageApi";
+import { ErrorResponseHandler } from "../../utils/ErrorResponseHandler";
+import { getSearchParams } from "../../utils/getSearchParams";
+import ManagePagination from "../Shared/ManagePagination";
+import PackageModal from "../UI/Modals/PackageModal";
 
 export default function PackageManage() {
 
@@ -27,7 +27,7 @@ export default function PackageManage() {
         description: "",
         discount: "",
         features: [
-            { name: "", isAvailable: true, limit: -1 }
+            { featuresKey: "", isAvailable: true, limit: -1 }
         ],
     };
 
@@ -72,7 +72,7 @@ export default function PackageManage() {
                 discount: pkg.discount || "",
                 features: pkg.features?.length
                     ? pkg.features
-                    : [{ name: "", isAvailable: true, limit: -1 }],
+                    : [{ featureKey: "", isAvailable: true, limit: -1 }],
             });
         }
         setOpenModal(true);
@@ -99,7 +99,7 @@ export default function PackageManage() {
     const addFeatureField = () => {
         setFormData((prev: any) => ({
             ...prev,
-            features: [...prev.features, { name: "", isAvailable: true, limit: -1 }],
+            features: [...prev.features, { featureKey: "", isAvailable: true, limit: -1 }],
         }));
     };
 
@@ -120,6 +120,7 @@ export default function PackageManage() {
                 refetch();
             }
         } catch (error: any) {
+            ErrorResponseHandler(error?.data)
             toast.error(error?.data?.message || "Failed to update package status.");
         }
     };
@@ -133,25 +134,25 @@ export default function PackageManage() {
                     return;
                 }
 
-                if (!formData.name.trim()) {
+                if (!formData?.name?.trim()) {
                     toast.warning("Package name is required");
                     return;
                 }
-                if (!formData.price) {
+                if (!formData?.price) {
                     toast.warning("Price is required");
                     return;
                 }
 
-                if (formData.features.some((f: any) => f.name.trim() === "")) {
-                    toast.warning("Feature name cannot be empty");
-                    return;
-                }
+                // if (formData.features.some((f: any) => f.featureKey.trim() === "")) {
+                //     toast.warning("Feature name cannot be empty");
+                //     return;
+                // }
 
                 const payload = {
                     ...formData,
                     price: Number(formData.price),
                     discount: formData.discount ? Number(formData.discount) : 0,
-                    features: formData.features.filter((f: any) => f.name.trim() !== ""),
+                    // features: formData.features.filter((f: any) => f.name.trim() !== ""),
                 };
 
                 let response;
@@ -181,9 +182,10 @@ export default function PackageManage() {
                     handleCloseModal();
                 }
             }
-        } catch (error: any) {
-            console.error("Error:", error);
-            toast.error(error?.data?.message || "Operation failed.");
+        } catch (error: any) {     
+            console.log("ErrorResponseHandler", error);
+                   
+            ErrorResponseHandler(error?.data)            
         }
     };
 
@@ -211,6 +213,7 @@ export default function PackageManage() {
             <div className="flex justify-between gap-3 items-center mb-4">
                 <p className="text-xl font-semibold">Package Management</p>
                 <Button
+                    hidden
                     variant="contained"
                     startIcon={<MdAdd />}
                     onClick={() => handleOpenModal("add")}

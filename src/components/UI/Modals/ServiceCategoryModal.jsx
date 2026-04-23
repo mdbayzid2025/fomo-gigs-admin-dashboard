@@ -3,9 +3,8 @@ import React, { useState } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { MdImage } from 'react-icons/md'
 
-const ServiceCategoryModal = ({ openModal, handleCloseModal, modalMode, selectedCategory, formData, handleInputChange, handleImageChange, handleRemoveImage, handleSubmit, isLoadingAdd, isLoadingEdit, isLoadingDelete, imageUrl, isSubmitting }) => {
+const ServiceCategoryModal = ({ openModal, handleCloseModal, modalMode, selectedCategory, formData, handleInputChange, handleImageChange, handleRemoveImage, imagePreview, imageFile, handleSubmit, isLoadingAdd, isLoadingEdit, isLoadingDelete, imageUrl, isSubmitting }) => {
 
-    const [imagePreview, setImagePreview] = useState(null);
 
     return (
         <Modal open={openModal} onClose={handleCloseModal}>

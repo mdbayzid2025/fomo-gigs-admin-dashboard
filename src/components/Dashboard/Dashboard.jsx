@@ -20,9 +20,10 @@ import {
 } from "../../Redux/api/overviewApi";
 import EventsGrowthBarChart from "../UI/Chart/EventsGrowthBarChart";
 
+const currentYear = new Date().getFullYear();
 export default function Dashboard() {
-  const [userGrowthByYear, setUserGrowthByYear] = useState(2026);
-  const [eventsGrowthByYear, setEventsGrowthByYear] = useState(2026);
+  const [userGrowthByYear, setUserGrowthByYear] = useState(currentYear);
+  const [eventsGrowthByYear, setEventsGrowthByYear] = useState(currentYear);
 
   const {
     data: allStatsData,
@@ -111,13 +112,11 @@ export default function Dashboard() {
                   onChange={handleUserGrowthYearChange}
                   className="h-10"
                 >
-                  <MenuItem value={2029}>2029</MenuItem>
-                  <MenuItem value={2028}>2028</MenuItem>
-                  <MenuItem value={2027}>2027</MenuItem>
-                  <MenuItem value={2026}>2026</MenuItem>
-                  <MenuItem value={2025}>2025</MenuItem>
-                  <MenuItem value={2024}>2024</MenuItem>
-                  <MenuItem value={2023}>2023</MenuItem>
+                  <MenuItem value={currentYear} >{currentYear}</MenuItem>
+                  <MenuItem value={currentYear - 1} >{currentYear - 1}</MenuItem>
+                  <MenuItem value={currentYear - 2} >{currentYear - 2}</MenuItem>
+                  <MenuItem value={currentYear - 3} >{currentYear - 3}</MenuItem>
+                  <MenuItem value={currentYear - 4} >{currentYear - 4}</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -160,13 +159,11 @@ export default function Dashboard() {
                     onChange={handleMatchesGrowthYearChange}
                     className="h-10"
                   >
-                    <MenuItem value={2029}>2029</MenuItem>
-                    <MenuItem value={2028}>2028</MenuItem>
-                    <MenuItem value={2027}>2027</MenuItem>
-                    <MenuItem value={2026}>2026</MenuItem>
-                    <MenuItem value={2025}>2025</MenuItem>
-                    <MenuItem value={2024}>2024</MenuItem>
-                    <MenuItem value={2023}>2023</MenuItem>
+                    <MenuItem value={currentYear} >{currentYear}</MenuItem>
+                    <MenuItem value={currentYear - 1} >{currentYear - 1}</MenuItem>
+                    <MenuItem value={currentYear - 2} >{currentYear - 2}</MenuItem>
+                    <MenuItem value={currentYear - 3} >{currentYear - 3}</MenuItem>
+                    <MenuItem value={currentYear - 4} >{currentYear - 4}</MenuItem>
                   </Select>
                 </FormControl>
               </div>

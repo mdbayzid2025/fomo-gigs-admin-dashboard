@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -23,20 +23,33 @@ import { IoAlertCircleOutline } from "react-icons/io5";
 
 import { useGetEventsSalesRevenueQuery } from "../../Redux/api/eventApi";
 import ManagePagination from "../Shared/ManagePagination";
+import SearchInput from "../Shared/SearchInput";
+import { useUpdateSearchParams } from "../../utils/updateSearchParams";
+import { getSearchParams } from "../../utils/getSearchParams";
 
 export default function SalesRevenue() {
   const [searchText, setSearchText] = useState("");
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
-
   const {
     data: revenueData,
     isLoading,
     isError,
+    refetch
   } = useGetEventsSalesRevenueQuery();
   const salesRevenue = revenueData?.data;
+
+
+  console.log("revenueData", revenueData);
   
+  const { page, limit, searchTerm } = getSearchParams()
+  const updateSearchParams = useUpdateSearchParams()
+  /* ✅ Sync filtered users when API data loads */
+  useEffect(() => {
+    refetch()
+  }, [page, limit, searchTerm]);
+
   const handleOpenModal = (transaction) => {
     setSelectedTransaction(transaction);
     setOpenModal(true);
@@ -68,20 +81,11 @@ export default function SalesRevenue() {
       {/* Header with Search */}
       <div className="flex justify-between gap-3 items-center mb-4">
         <p className="text-xl font-semibold">Sales Revenue</p>
-        <div className="flex items-center gap-3">
-          <TextField
-            sx={{ width: 300 }}
-            placeholder="Search Event or Organizer"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <FaSearch />
-                </InputAdornment>
-              ),
-            }}
+        <div className="flex justify-end mb-10">
+          <SearchInput
+            placeholder="Search by user Name or Email"
+            onSearch={(value) => updateSearchParams({ searchTerm: value })}
+            width={300}
           />
         </div>
       </div>
@@ -160,7 +164,9 @@ export default function SalesRevenue() {
         </Table>
       </TableContainer>
 
-      <ManagePagination meta={revenueData} />
+
+
+      <ManagePagination meta={revenueData?.meta} />
 
       {/* Enhanced Details Modal */}
       <Modal open={openModal} onClose={handleCloseModal}>

@@ -17,7 +17,7 @@ const eventApi = baseApi.injectEndpoints({
     }),
     getEventCategories: builder.query({
       query: () => {
-        const accessToken = sessionStorage.getItem("accessToken");        
+        const accessToken = sessionStorage.getItem("accessToken");
         return {
           url: `/event-categories${location?.search}`,
           method: "get",
@@ -31,9 +31,8 @@ const eventApi = baseApi.injectEndpoints({
     getEventsSalesRevenue: builder.query({
       query: () => {
         const accessToken = sessionStorage.getItem("accessToken");
-        
         return {
-          url: "/events/dashboard/event-ticket-sales-stats",
+          url: `/events/dashboard/event-ticket-sales-stats${location?.search}`,
           method: "get",
           headers: {
             authorization: `Bearer ${accessToken}`,
@@ -42,10 +41,10 @@ const eventApi = baseApi.injectEndpoints({
       },
       providesTags: ["events"],
     }),
-    addCategory: builder.mutation({
+    addEventCategory: builder.mutation({
       query: (categoryData) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        
+
         return {
           url: "/event-categories",
           method: "post",
@@ -60,7 +59,7 @@ const eventApi = baseApi.injectEndpoints({
     deleteCategory: builder.mutation({
       query: (id) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        
+
         return {
           url: `/event-categories/${id}`,
           method: "delete",
@@ -71,10 +70,10 @@ const eventApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["events"],
     }),
-    editCategory: builder.mutation({
+    editEventCategory: builder.mutation({
       query: ({ id, data }) => {
         const accessToken = sessionStorage.getItem("accessToken");
-        
+
         return {
           url: `/event-categories/${id}`,
           method: "patch",
@@ -93,7 +92,7 @@ export const {
   useGetAllEventsQuery,
   useGetEventCategoriesQuery,
   useGetEventsSalesRevenueQuery,
-  useAddCategoryMutation,
+  useAddEventCategoryMutation,
   useDeleteCategoryMutation,
-  useEditCategoryMutation,
+  useEditEventCategoryMutation,
 } = eventApi;

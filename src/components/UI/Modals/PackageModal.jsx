@@ -75,6 +75,7 @@ const PackageModal = ({
 
                             <div className="flex gap-3 mt-4">
                                 <TextField
+                                    disabled
                                     fullWidth
                                     select
                                     label="Type"
@@ -171,11 +172,12 @@ const PackageModal = ({
 
                             {/* Features Section */}
                             <div>
-                                <div className="flex justify-between items-center mb-2">
+                                {/* <div className="flex justify-between items-center mb-2">
                                     <Typography variant="subtitle1" fontWeight="600">
                                         Features
                                     </Typography>
                                     <Button
+                                    disabled
                                         startIcon={<IoAdd />}
                                         size="small"
                                         onClick={addFeatureField}
@@ -183,20 +185,22 @@ const PackageModal = ({
                                     >
                                         Add Feature
                                     </Button>
-                                </div>
+                                </div> */}
 
                                 {formData.features.map((feature, index) => (
-                                    <div key={index} className="flex gap-2 mb-3 items-start">
+                                    <div key={index} className=" flex gap-2 mb-3 items-start">
                                         <TextField
+                                            disabled
                                             fullWidth
                                             label="Feature Name"
-                                            value={feature.name}
+                                            value={feature.featureKey}
                                             onChange={(e) =>
-                                                handleFeatureChange(index, "name", e.target.value)
+                                                handleFeatureChange(index, "featureKey", e.target.value)
                                             }
                                             size="small"
                                         />
                                         <TextField
+                                            disabled
                                             label="Limit"
                                             type="number"
                                             value={feature.limit}
@@ -207,9 +211,9 @@ const PackageModal = ({
                                             sx={{ width: 120 }}
                                         />
                                         <IconButton
+                                            disabled
                                             color="error"
-                                            onClick={() => removeFeatureField(index)}
-                                            disabled={formData.features.length === 1}
+                                            onClick={() => removeFeatureField(index)}                                            
                                         >
                                             <IoTrash />
                                         </IconButton>
