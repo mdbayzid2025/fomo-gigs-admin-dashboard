@@ -3,19 +3,15 @@ import {
     Chip,
     CircularProgress,
     IconButton,
-    InputAdornment,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TablePagination,
     TableRow,
-    TextField,
-    Tooltip,
+    Tooltip
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
 import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
 import { TbToggleLeft, TbToggleRight } from "react-icons/tb";
 import { toast } from "sonner";
@@ -25,11 +21,10 @@ import {
     useEditCouponMutation,
     useGetCouponsQuery,
 } from "../../Redux/api/couponApi";
-import CouponModal from "../UI/Modals/CouponModal";
-import ManagePagination from "../Shared/ManagePagination";
-import { getSearchParams } from "../../utils/getSearchParams";
-import { useUpdateSearchParams } from "../../utils/updateSearchParams";
 import { ErrorResponseHandler } from "../../utils/ErrorResponseHandler";
+import { getSearchParams } from "../../utils/getSearchParams";
+import ManagePagination from "../Shared/ManagePagination";
+import CouponModal from "../UI/Modals/CouponModal";
 
 export default function CouponManage() {
     const [searchText, setSearchText] = useState("");
