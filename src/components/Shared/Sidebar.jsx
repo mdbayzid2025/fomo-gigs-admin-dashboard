@@ -78,6 +78,11 @@ export default function Sidebar() {
             label: "Coupon Management",
           },
           {
+            to: "/withdrawal-management",
+            icon: <LuDollarSign className=" lg:text-2xl" />,
+            label: "Withdrawal Request",
+          },
+          {
             to: "/packages-management",
             icon: <RiCoupon3Line className=" lg:text-2xl" />,
             label: "Packages Management",
