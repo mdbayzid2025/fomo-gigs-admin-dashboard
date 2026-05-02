@@ -29,6 +29,7 @@ import SystemHealth from "../Dashboard/SystemHealth";
 import UserManagement from "../Dashboard/UserManagement";
 import DashboardLayout from "../Layout/DashboardLayout";
 import MainLayout from "../Layout/MainLayout";
+import WithdrawalManagement from "../Dashboard/Withdrawal/WithdrawalManagement";
 
 
 const router = createBrowserRouter([
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
           {
             path: "event-management",
             element: <EventManagement />,
+          },
+          {
+            path: "withdrawal-management",
+            element: <WithdrawalManagement />,
           },
           {
             path: "packages-management",
