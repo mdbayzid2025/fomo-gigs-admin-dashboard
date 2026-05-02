@@ -15,6 +15,7 @@ export const baseApi = createApi({
     "packages",
     "faq",
     "events",
-    'coupons'
+    'coupons',
+    'withdrawals'
   ],
 });
